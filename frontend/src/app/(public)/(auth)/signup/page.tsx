@@ -1,45 +1,6 @@
 "use client";
 
-import { supabaseBrowser } from "@/lib/supabase-browser";
-
-// export default function SignupPage() {
-//   const supabase = supabaseBrowser();
-
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-
-//   const handleSignup = async () => {
-//     const { data, error } = await supabase.auth.signUp({
-//       email,
-//       password,
-//     });
-
-//     if (error) return alert(error.message);
-//     alert("Sign up berhasil. Periksa email untuk verifikasi akun.");
-//   };
-
-//   return (
-//     <div style={{ padding: 20 }}>
-//       <h1>Sign Up</h1>
-
-//       <input
-//         placeholder="Email"
-//         value={email}
-//         onChange={(e) => setEmail(e.target.value)}
-//         type="email"
-//       />
-
-//       <input
-//         placeholder="Password"
-//         value={password}
-//         onChange={(e) => setPassword(e.target.value)}
-//         type="password"
-//       />
-
-//       <button onClick={handleSignup}>Sign Up</button>
-//     </div>
-//   );
-// }
+import { supabase } from "@/lib/supabase";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -56,7 +17,6 @@ import Header from "@/components/Header";
 import { TiArrowLeftOutline } from "react-icons/ti";
 
 export default function RegisterPage() {
-  const supabase = supabaseBrowser();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({

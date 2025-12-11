@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 // Mock data untuk komponen
 const skinMetrics = [
@@ -96,6 +97,17 @@ export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (!error) setUser(data.user);
+    };
+
+    getUser();
+  }, []);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
@@ -147,7 +159,7 @@ export default function DashboardPage() {
                   <User className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                 </div>
                 <div className="hidden md:block">
-                  <p className="text-sm font-medium">Username</p>
+                  <p className="text-sm font-medium">{user?.email}</p>
                   {/* <p className="text-xs text-zinc-500 dark:text-zinc-400">
                     Pengguna Premium
                   </p> */}
@@ -171,7 +183,7 @@ export default function DashboardPage() {
                 <span className="font-medium">Dashboard</span>
               </Link>
 
-              {/* <Link
+              <Link
                 href="/dashboard/analysis"
                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
               >
@@ -179,7 +191,7 @@ export default function DashboardPage() {
                 <span>Analisis Kulit</span>
               </Link>
 
-              <Link
+              {/* <Link
                 href="/dashboard/journal"
                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
               >
@@ -266,6 +278,7 @@ export default function DashboardPage() {
 
         {/* Main Content */}
         <main className="flex-1 p-4 md:p-6">
+          anggap aja ini dashboardnya
           {/* Welcome & Quick Actions */}
           {/* <div className="mb-8">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
@@ -293,7 +306,6 @@ export default function DashboardPage() {
               </Link>
             </div>
           </div> */}
-
           {/* Skin Metrics Grid */}
           {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {skinMetrics.map((metric, idx) => (
@@ -341,7 +353,6 @@ export default function DashboardPage() {
               </div>
             ))}
           </div> */}
-
           {/* Two Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activities */}
@@ -421,7 +432,6 @@ export default function DashboardPage() {
               </div>
             </div> */}
           </div>
-
           {/* Skin Progress Chart Placeholder */}
           <div className="mt-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
             {/* <div className="flex items-center justify-between mb-6">

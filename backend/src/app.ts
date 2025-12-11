@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import multer from "multer";
 
 import healthRoute from "./routes/health.route";
+import skinCheckRoute from "./routes/skin-check.route";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const upload = multer({ dest: "uploads/" });
 
 // Routes
 app.use("/health", healthRoute);
+app.use("/api/skin-check", skinCheckRoute);
 
 // Example endpoint using multer
 app.post("/upload", upload.single("image"), (req, res) => {
