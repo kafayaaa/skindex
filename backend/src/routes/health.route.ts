@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { healthCheck, protectedRoute } from "../controllers/health.controller";
-import { auth } from "../middleware/auth";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
 router.get("/", healthCheck);
-router.get("/protected", auth, protectedRoute);
+router.get("/protected", requireAuth, protectedRoute);
 
 export default router;
