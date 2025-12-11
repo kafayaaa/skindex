@@ -81,6 +81,18 @@ export default function LoginPage() {
       return;
     }
 
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    // Jika profile belum ada → redirect ke initialize
+    if (!profile) {
+      alert("Profile belum ada. Silahkan lakukan proses berikut.");
+      return router.push("/initialize");
+    }
+
     alert("Berhasil login");
     router.push("/dashboard");
   };
