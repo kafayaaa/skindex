@@ -182,11 +182,17 @@ export default function DashboardLayout({
                     <div className="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
                       <User className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                     </div>
-                    <div className="hidden md:block">
+                    <div className="hidden md:flex items-center gap-5">
                       <p className="text-sm font-medium">{user?.email}</p>
                       {/* <p className="text-xs text-zinc-500 dark:text-zinc-400">
                         Pengguna Premium
                     </p> */}
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 dark:text-red-400"
+                      >
+                        <LogOut className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -196,7 +202,7 @@ export default function DashboardLayout({
 
           <div className="flex">
             {/* Sidebar - Desktop */}
-            <aside className="hidden md:block w-64 min-h-[calc(100vh-4rem)] border-r border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50">
+            {/* <aside className="hidden md:block w-64 min-h-[calc(100vh-4rem)] border-r border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50">
               <div className="p-6">
                 <nav className="space-y-2">
                   <Link
@@ -207,46 +213,46 @@ export default function DashboardLayout({
                     <span className="font-medium">Dashboard</span>
                   </Link>
 
-                  {/* <Link
+                  <Link
                     href="/dashboard/daily-log"
                     className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
-                >
+                  >
                     <MdOutlineEditCalendar className="w-5 h-5" />
                     <span>Daily Log</span>
-                </Link> */}
+                  </Link>
 
-                  {/* <Link
+                  <Link
                     href="/dashboard/analysis"
                     className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
-                >
+                  >
                     <Camera className="w-5 h-5" />
                     <span>Analisis Kulit</span>
-                </Link> */}
+                  </Link>
 
-                  {/* <Link
+                  <Link
                     href="/dashboard/journal"
                     className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
-                >
+                  >
                     <Calendar className="w-5 h-5" />
                     <span>Skin Journal</span>
-                </Link>
+                  </Link>
 
-                <Link
+                  <Link
                     href="/dashboard/triggers"
                     className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
-                >
+                  >
                     <Search className="w-5 h-5" />
                     <span>Deteksi Pemicu</span>
-                </Link> */}
+                  </Link>
 
                   <div className="pt-8 mt-8 border-t border-zinc-200 dark:border-zinc-700 space-y-2">
-                    {/* <Link
-                    href="/dashboard/settings"
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+                    <Link
+                      href="/dashboard/settings"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
                     >
-                    <Settings className="w-5 h-5" />
-                    <span>Pengaturan</span>
-                    </Link> */}
+                      <Settings className="w-5 h-5" />
+                      <span>Pengaturan</span>
+                    </Link>
 
                     <button
                       onClick={handleLogout}
@@ -258,10 +264,10 @@ export default function DashboardLayout({
                   </div>
                 </nav>
               </div>
-            </aside>
+            </aside> */}
 
             {/* Sidebar - Mobile */}
-            {sidebarOpen && (
+            {/* {sidebarOpen && (
               <div className="md:hidden fixed inset-0 z-40">
                 <div
                   className="fixed inset-0 bg-black/50"
@@ -309,7 +315,7 @@ export default function DashboardLayout({
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Main Content */}
             <main className="flex-1 p-4 md:p-6">
@@ -469,7 +475,7 @@ export default function DashboardLayout({
                 </div> */}
               </div>
               {/* Skin Progress Chart Placeholder */}
-              <div className="mt-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
+              <div className="max-w-7xl mx-auto mt-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
                 {children}
 
                 {/* <div className="flex items-center justify-between mb-6">

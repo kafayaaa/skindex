@@ -99,3 +99,80 @@ export interface AnalysisResult {
   moisture_score: number;
   generated_at: string; // timestamptz
 }
+
+export interface AnalysisInterpretation {
+  id: number;
+  user_id: string;
+  photo_id: number;
+  severity: "low" | "medium" | "high";
+  intro_text: string;
+  concerns: string[];
+  recommendations: {
+    title: string;
+    category: string;
+    priority: 1 | 2 | 3;
+    severity: "low" | "medium" | "high";
+    description: string;
+  }[];
+  generated_at: string;
+}
+
+export type SkinConcern = "acne" | "redness" | "oiliness" | "dehydration";
+
+export type SkinCondition =
+  | "balanced"
+  | "oily"
+  | "oily_dehydrated"
+  | "oily_acne_prone"
+  | "dry"
+  | "dry_dehydrated"
+  | "dry_irritated"
+  | "sensitive"
+  | "inflamed";
+
+export interface SkinRecommendation {
+  id: number;
+  interpretation_id: number;
+
+  title: string;
+  description: string;
+
+  category: RecommendationCategory;
+  priority: 1 | 2 | 3;
+
+  created_at: string;
+}
+
+export type RecommendationCategory =
+  | "routine"
+  | "ingredient"
+  | "lifestyle"
+  | "warning";
+
+export type Severity = "low" | "moderate" | "high";
+
+export interface Interpretation {
+  opening: string;
+  summary: string;
+  skin_condition: string;
+  concerns: string[];
+  severity: Severity;
+}
+
+export interface Recommendation {
+  id: number;
+  title: string;
+  description: string;
+  category: "routine" | "ingredient" | "warning";
+  priority: 1 | 2 | 3;
+}
+
+export interface AnalysisDetail {
+  id: number;
+  opening: string;
+  summary: string;
+  skin_condition: string;
+  concerns: string[];
+  severity: "low" | "moderate" | "high";
+  analysis_recommendations: Recommendation[];
+}

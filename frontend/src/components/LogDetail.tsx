@@ -10,10 +10,21 @@ import { GiHeatHaze, GiNightSleep } from "react-icons/gi";
 import { TbDroplets, TbMoodPuzzled } from "react-icons/tb";
 import { useSkin } from "@/context/SkinContext";
 import Link from "next/link";
+import { useEffect } from "react";
+import { generateRecommendations } from "@/utils/recommendationEngine";
 
 export default function LogDetail({ date }: { date: Date }) {
   const { selectedDayData, selectedDay, getRatingColor } = useDate();
-  const { logs, analysis, loading, error } = useSkin();
+  const {
+    logs,
+    analysis,
+    analysisDetails,
+    fetchAnalysisDetail,
+    interpretations,
+    loading,
+    error,
+  } = useSkin();
+  console.log("INTERPRETATIONS RAW:", interpretations);
 
   const formatDateToISO = (d: Date): string => {
     const year = d.getFullYear();
@@ -34,6 +45,28 @@ export default function LogDetail({ date }: { date: Date }) {
     return analysisDate === selectedDateString;
   });
 
+  const getAnalysisForDate = (date: Date) => {
+    const dateStr = formatDateToISO(date);
+
+    return analysis.find((a) => a.generated_at.startsWith(dateStr));
+  };
+  const selectedAnalysis = getAnalysisForDate(selectedDay);
+  const selectedDetail = selectedAnalysis
+    ? analysisDetails[selectedAnalysis.photo_id]
+    : null;
+
+  useEffect(() => {
+    if (selectedAnalysis) {
+      fetchAnalysisDetail(selectedAnalysis.photo_id);
+    }
+  }, [selectedAnalysis?.photo_id]);
+
+  const selectedDateISO = formatDateToISO(selectedDay);
+
+  const todayInterpretation = interpretations.find(
+    (i) => i.generated_at && i.generated_at?.startsWith(selectedDateISO)
+  );
+
   if (loading) return <p>Memuat log...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
@@ -41,8 +74,8 @@ export default function LogDetail({ date }: { date: Date }) {
     <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-5">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
         {/* Left Column - Day Info */}
-        <div className="flex-1">
-          <div className="w-full grid grid-cols-12 gap-4 mb-6">
+        <div className="w-full">
+          <div className="grid grid-cols-12 gap-4 mb-6">
             <div className="col-span-6 flex items-center gap-3 mb-4">
               <div
                 className={`
@@ -119,10 +152,13 @@ export default function LogDetail({ date }: { date: Date }) {
           {/* Day Status */}
           <div className="grid grid-cols-6 gap-4 mb-6">
             {filteredAnalysis.map((analysis) => (
-              <div key={analysis.id} className="col-span-4 flex gap-4">
+              <div
+                key={analysis.id}
+                className="col-span-4 grid grid-cols-4 gap-4"
+              >
                 <SkinProgressCard
                   icon={
-                    <IoIosCloseCircleOutline className="text-2xl text-pink-500" />
+                    <IoIosCloseCircleOutline className="text-7xl text-pink-500" />
                   }
                   title="Acne"
                   value={analysis.acne_score}
@@ -131,7 +167,7 @@ export default function LogDetail({ date }: { date: Date }) {
                   valueColor="text-pink-500"
                 />
                 <SkinProgressCard
-                  icon={<LuDroplets className="text-2xl text-yellow-500" />}
+                  icon={<LuDroplets className="text-7xl text-yellow-500" />}
                   title="Oil"
                   value={analysis.oilness_score}
                   valueDesc="/10"
@@ -139,7 +175,7 @@ export default function LogDetail({ date }: { date: Date }) {
                   valueColor="text-yellow-500"
                 />
                 <SkinProgressCard
-                  icon={<GiHeatHaze className="text-2xl text-red-500" />}
+                  icon={<GiHeatHaze className="text-7xl text-red-500" />}
                   title="Redness"
                   value={analysis.redness_score}
                   valueDesc="/10"
@@ -147,7 +183,7 @@ export default function LogDetail({ date }: { date: Date }) {
                   valueColor="text-red-500"
                 />
                 <SkinProgressCard
-                  icon={<TbDroplets className="text-2xl text-cyan-500" />}
+                  icon={<TbDroplets className="text-7xl text-cyan-500" />}
                   title="Moisture"
                   value={analysis.moisture_score}
                   valueDesc="/10"
@@ -157,9 +193,9 @@ export default function LogDetail({ date }: { date: Date }) {
               </div>
             ))}
             {filteredLogs.map((log) => (
-              <div key={log.id} className="col-span-2 flex gap-4">
+              <div key={log.id} className="col-span-2 grid grid-cols-2 gap-4">
                 <SkinProgressCard
-                  icon={<TbMoodPuzzled className="text-2xl text-violet-500" />}
+                  icon={<TbMoodPuzzled className="text-7xl text-violet-500" />}
                   title="Stress"
                   value={log.stress_level}
                   valueDesc="/10"
@@ -167,7 +203,7 @@ export default function LogDetail({ date }: { date: Date }) {
                   valueColor="text-violet-500"
                 />
                 <SkinProgressCard
-                  icon={<GiNightSleep className="text-2xl text-indigo-500" />}
+                  icon={<GiNightSleep className="text-7xl text-indigo-500" />}
                   title="Sleep"
                   value={log.sleep_hours}
                   valueDesc="jam"
@@ -180,6 +216,40 @@ export default function LogDetail({ date }: { date: Date }) {
 
           {/* Notes */}
           <DailyLog date={selectedDayData?.date ?? selectedDay} />
+          {todayInterpretation && (
+            <div className="mt-6 p-4 rounded-xl bg-cyan-50 dark:bg-cyan-900/30">
+              <h3 className="font-semibold text-cyan-700 dark:text-cyan-300 mb-2">
+                Catatan Kulit Hari Ini
+              </h3>
+
+              <p className="text-sm mb-3">{todayInterpretation.intro_text}</p>
+              <p>{todayInterpretation.concerns}</p>
+              <p>{todayInterpretation.severity}</p>
+              {todayInterpretation.recommendations.map((rec, idx) => (
+                <div key={idx} className="mb-4">
+                  <h4 className="font-semibold text-zinc-800 dark:text-zinc-200">
+                    {rec.title}
+                    {/* Opsional: Tampilkan Priority */}
+                    <span className={`ml-2 text-xs font-normal text-cyan-600`}>
+                      (Priority: {rec.priority})
+                    </span>
+                  </h4>
+                  <p className="text-zinc-600 dark:text-zinc-400">
+                    {rec.description}
+                  </p>
+                </div>
+              ))}
+
+              <ul className="list-disc ml-5 space-y-1 text-sm">
+                {generateRecommendations(
+                  todayInterpretation.severity,
+                  todayInterpretation.concerns
+                ).map((rec, idx) => (
+                  <li key={idx}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Right Column - Quick Actions & Skin Rating */}
@@ -226,21 +296,41 @@ export default function LogDetail({ date }: { date: Date }) {
 
           {/* Quick Actions */}
           <div className="space-y-3">
-            <Link
-              href="/dashboard/daily-log"
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span>Tambah Log Harian</span>
-            </Link>
+            {filteredLogs.length > 0 ? (
+              <button
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
+                disabled={true}
+              >
+                <CheckCircle className="w-4 h-4" />
+                <span>Log harian terisi</span>
+              </button>
+            ) : (
+              <Link
+                href="/dashboard/daily-log"
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-cyan-600 hover:bg-cyan-700 text-white`}
+              >
+                <CheckCircle className="w-4 h-4" />
+                <span>Tambah Log Harian</span>
+              </Link>
+            )}
 
-            <Link
-              href="/dashboard/analysis"
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-cyan-600 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
-            >
-              <Camera className="w-4 h-4" />
-              <span>Analisis Foto</span>
-            </Link>
+            {filteredAnalysis.length > 0 ? (
+              <button
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
+                disabled={true}
+              >
+                <Camera className="w-4 h-4" />
+                <span>Analisis foto selesai</span>
+              </button>
+            ) : (
+              <Link
+                href="/dashboard/analysis"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-cyan-600 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Analisis Foto</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
