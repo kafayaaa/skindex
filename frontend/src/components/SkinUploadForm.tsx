@@ -84,6 +84,7 @@ export default function SkinUploadForm() {
 
     try {
       const data = await analyzeSkin(file, todayLog.id);
+      console.log("ANALYSIS RESULT:", data);
       setAnalysis(data.result);
       router.push("/dashboard");
     } catch (err) {

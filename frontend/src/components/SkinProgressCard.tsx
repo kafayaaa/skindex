@@ -19,11 +19,11 @@ export default function SkinProgressCard({
 }: Props) {
   return (
     <div
-      className={`w-full p-5 flex justify-between gap-5 items-center rounded-lg ${bgColor}`}
+      className={`relative overflow-clip p-3 w-full flex justify-between gap-2 items-center rounded-lg ${bgColor}`}
     >
-      <div className="flex items-center gap-1">
-        {icon}
-        <p className="font-semibold">{title}</p>
+      <div className=" flex items-center gap-1">
+        <div className="absolute top-0 left-0 opacity-20">{icon}</div>
+        <p className="font-semibold text-sm">{title}</p>
       </div>
       <div className="flex flex-col justify-center">
         <h1 className={`text-3xl font-bold ${valueColor}`}>{value}</h1>

@@ -21,13 +21,17 @@ export default function CalendarWeekly() {
     selectedDayData,
   } = useDate();
 
-  const { logs } = useSkin();
+  const { logs, analysis } = useSkin();
 
   const formatDateToISO = (d: Date): string => {
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, "0"); // Bulan dimulai dari 0
     const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  const formatISODateOnly = (iso: string) => {
+    return iso.split("T")[0]; // ambil YYYY-MM-DD
   };
 
   return (
@@ -130,8 +134,19 @@ export default function CalendarWeekly() {
             day.date.getFullYear() === selectedDay.getFullYear();
 
           const currentDayString = formatDateToISO(day.date);
+
+          // logs
           const dayLogs = logs.filter((log) => log.date === currentDayString);
           const hasLogForDay = dayLogs.length > 0;
+
+          // analysis
+          const dayAnalysis = analysis.filter(
+            (a) => formatISODateOnly(a.generated_at) === currentDayString
+          );
+          const hasAnalysisForDay = dayAnalysis.length > 0;
+
+          // latest analysis of the day (optional)
+          const latestAnalysis = dayAnalysis[0];
 
           return (
             <button
@@ -203,6 +218,23 @@ export default function CalendarWeekly() {
                     <FiXCircle className="text-xl text-zinc-500" />
                   )}
                 </div>
+
+                {/* Analysis Indicator */}
+                {hasAnalysisForDay && (
+                  <div className="flex items-center gap-1">
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        latestAnalysis.acne_score >= 4
+                          ? "bg-red-500"
+                          : latestAnalysis.acne_score >= 3
+                          ? "bg-yellow-400"
+                          : "bg-green-500"
+                      }`}
+                      title={`Acne score: ${latestAnalysis.acne_score}`}
+                    />
+                    <span className="text-xs">{latestAnalysis.acne_score}</span>
+                  </div>
+                )}
 
                 {/* Mood */}
                 {/* {day.mood && (

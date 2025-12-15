@@ -23,11 +23,11 @@ export default function DailyLog({ date }: { date: Date }) {
   if (filteredLogs.length === 0) {
     return (
       <div className="text-center py-6">
-        <p className="text-zinc-500 dark:text-zinc-400 mb-3">
-          Belum ada catatan untuk hari ini
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
+          Belum ada catatan nih hari ini
         </p>
-        <button className="text-sm text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300">
-          + Tambah catatan
+        <button className="text-xl font-semibold text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300">
+          Tambah catatan dulu yuk!
         </button>
       </div>
     );

@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { analyzeSkinWithGemini } from "../services/skin.service";
 import { supabase } from "../utils/supabase";
+import { mapConcernsFromScore } from "../lib/skin/concern.mapper";
+import { buildAnalysisResult } from "../lib/skin/orchestrator";
 
 export const analyzeSkin = async (req: Request, res: Response) => {
   try {
@@ -82,6 +84,40 @@ export const analyzeSkin = async (req: Request, res: Response) => {
 
     if (analysisError) throw analysisError;
 
+    // 4.1 Mapping concern otomatis
+    const concerns = mapConcernsFromScore({
+      acne: scores.acne_score,
+      oil: scores.oiliness_score,
+      redness: scores.redness_score,
+      moisture: scores.moisture_score,
+    });
+
+    // 4.2 Build interpretation & recommendation
+    const interpretation = buildAnalysisResult({
+      concerns,
+      scores: {
+        acne: scores.acne_score,
+        oil: scores.oiliness_score,
+        redness: scores.redness_score,
+        moisture: scores.moisture_score,
+      },
+    });
+
+    // 4.3 Save interpretation
+    const { error: interpretationError } = await supabase
+      .from("analysis_interpretations")
+      .insert({
+        user_id: userId,
+        photo_id: photo.id,
+        severity: interpretation.severity,
+        intro_text: interpretation.intro,
+        concerns,
+        recommendations: interpretation.recommendations, // jsonb
+        generated_at: new Date().toISOString(),
+      });
+
+    if (interpretationError) throw interpretationError;
+
     // 5. Update status
     await supabase
       .from("photos")
@@ -91,7 +127,8 @@ export const analyzeSkin = async (req: Request, res: Response) => {
     return res.json({
       message: "Skin analysis completed",
       photo_id: photo.id,
-      result: scores,
+      scores,
+      interpretation,
     });
   } catch (error) {
     console.error(error);
