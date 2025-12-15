@@ -6,7 +6,7 @@ export type SkinType =
   | "kombinasi"
   | "tidak diketahui";
 
-export type AnalysisStatus = "pending" | "done" | "failed";
+export type AnalysisStatus = "pending" | "processing" | "completed" | "failed";
 
 export type ProductCategory =
   | "cleanser"
@@ -28,7 +28,7 @@ export interface Profile {
 }
 
 export interface SkinLog {
-  id: number; // bigserial
+  id: string; // bigserial
   user_id: string; // uuid
   date: string; // date (unique per user per day)
   notes: string;
@@ -94,7 +94,7 @@ export interface AnalysisResult {
   photo_id: number; // bigint FK
   user_id: string; // uuid
   acne_score: number;
-  oiliness_score: number;
+  oilness_score: number;
   redness_score: number;
   moisture_score: number;
   generated_at: string; // timestamptz

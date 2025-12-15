@@ -1,12 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import multer from "multer";
-
 import healthRoute from "./routes/health.route";
 import skinCheckRoute from "./routes/skin-check.route";
-
-dotenv.config();
+import skinRouter from "./routes/skin.route";
 
 const app = express();
 app.use(cors());
@@ -18,6 +18,7 @@ const upload = multer({ dest: "uploads/" });
 // Routes
 app.use("/health", healthRoute);
 app.use("/api/skin-check", skinCheckRoute);
+app.use("/api/skin", skinRouter);
 
 // Example endpoint using multer
 app.post("/upload", upload.single("image"), (req, res) => {

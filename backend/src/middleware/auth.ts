@@ -1,13 +1,10 @@
-import jwt from "jsonwebtoken";
-import type { Request, Response, NextFunction } from "express";
+import { createClient } from "@supabase/supabase-js";
+import { NextFunction, Request, Response } from "express";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: any;
-    }
-  }
-}
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function requireAuth(
   req: Request,
@@ -15,20 +12,18 @@ export async function requireAuth(
   next: NextFunction
 ) {
   const auth = req.headers.authorization;
-  if (!auth)
-    return res.status(401).json({ error: "Missing authorization header" });
-
-  const token = auth.split(" ")[1];
-
-  try {
-    // Supabase uses JWT with a known JWKS structure but can be verified simply:
-    const payload = jwt.decode(token);
-
-    if (!payload) return res.status(401).json({ error: "Invalid token" });
-
-    req.user = payload;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: "Unauthenticated" });
+  if (!auth) {
+    return res.status(401).json({ message: "Missing authorization header" });
   }
+
+  const token = auth.replace("Bearer ", "");
+
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+
+  if (error || !data.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  req.user = data.user;
+  next();
 }
