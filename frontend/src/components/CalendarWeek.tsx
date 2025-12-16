@@ -37,21 +37,23 @@ export default function CalendarWeekly() {
   return (
     <>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-            Progres Kulitmu
-          </h2>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            {formatDateRange()}
-          </p>
+      <div className="flex sm:items-center justify-between gap-4 mb-6">
+        <div className="w-full flex items-center gap-3">
+          <CalendarIcon className="size-10 text-cyan-600 dark:text-cyan-400 hidden md:block" />
+          <div>
+            <h2 className="text-base md:text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 mb-1">
+              Progres Kulitmu
+            </h2>
+            <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
+              {formatDateRange()}
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <button
             onClick={() => navigateWeek("prev")}
-            className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+            className="p-1 md:p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
             title="Minggu sebelumnya"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -59,14 +61,14 @@ export default function CalendarWeekly() {
 
           <button
             onClick={goToCurrentWeek}
-            className="px-4 py-2 text-sm bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
+            className="px-3 md:px-4 py-2 text-xs md:text-sm md:truncate bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
           >
             Minggu Ini
           </button>
 
           <button
             onClick={() => navigateWeek("next")}
-            className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+            className="p-1 md:p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
             title="Minggu berikutnya"
           >
             <ChevronRight className="w-5 h-5" />
@@ -153,7 +155,7 @@ export default function CalendarWeekly() {
               key={idx}
               onClick={() => setSelectedDay(day.date)}
               className={`
-                flex flex-col items-center p-3 rounded-xl transition-all duration-200
+                flex flex-col items-center p-2 md:p-3 rounded-xl transition-all duration-200
                 ${
                   isSelected
                     ? "bg-cyan-100 dark:bg-cyan-900/50 border-2 border-cyan-500"
@@ -166,7 +168,7 @@ export default function CalendarWeekly() {
               {/* Day Name */}
               <div
                 className={`
-                text-sm font-medium mb-2
+                text-[0.7rem] md:text-sm font-medium mb-1 md:mb-2
                 ${
                   isSelected
                     ? "text-cyan-700 dark:text-cyan-300"
@@ -180,7 +182,7 @@ export default function CalendarWeekly() {
               {/* Date Number */}
               <div
                 className={`
-                w-10 h-10 rounded-full flex items-center justify-center text-lg font-semibold mb-3
+                w-6 md:w-10 h-6 md:h-10 rounded-full flex items-center justify-center text-sm md:text-lg font-semibold mb-3
                 ${
                   isSelected
                     ? "bg-cyan-500 text-white"
@@ -212,15 +214,15 @@ export default function CalendarWeekly() {
                 <div className="flex items-center gap-1">
                   {hasLogForDay ? (
                     <>
-                      <FiCheckCircle className="text-xl text-emerald-500" />
+                      <FiCheckCircle className="text-base md:text-xl text-emerald-500" />
                     </>
                   ) : (
-                    <FiXCircle className="text-xl text-zinc-500" />
+                    <FiXCircle className="text-base md:text-xl text-zinc-500" />
                   )}
                 </div>
 
                 {/* Analysis Indicator */}
-                {hasAnalysisForDay && (
+                {/* {hasAnalysisForDay && (
                   <div className="flex items-center gap-1">
                     <div
                       className={`w-2 h-2 rounded-full ${
@@ -234,7 +236,7 @@ export default function CalendarWeekly() {
                     />
                     <span className="text-xs">{latestAnalysis.acne_score}</span>
                   </div>
-                )}
+                )} */}
 
                 {/* Mood */}
                 {/* {day.mood && (
@@ -260,7 +262,7 @@ export default function CalendarWeekly() {
 
       {/* Week Navigation Tips */}
       <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700 text-center">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
           Gunakan tombol panah untuk navigasi minggu • Klik &quot;Minggu
           Ini&quot; untuk kembali ke minggu saat ini
         </p>

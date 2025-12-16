@@ -12,6 +12,8 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
+import { BiLoader } from "react-icons/bi";
+import LoadingScreen from "./LoadingScreen";
 
 export default function SkinUploadForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -39,13 +41,7 @@ export default function SkinUploadForm() {
     }
   };
 
-  if (loading)
-    return (
-      <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-8 text-center">
-        <div className="animate-spin w-12 h-12 mx-auto mb-4 border-4 border-cyan-500 border-t-transparent rounded-full"></div>
-        <p className="text-zinc-600 dark:text-zinc-400">Memuat data log...</p>
-      </div>
-    );
+  if (loading) return <LoadingScreen />;
 
   const selectedDate = selectedDayData?.date.toISOString().split("T")[0];
   const todayLog = logs.find((log) => log.date === selectedDate);
@@ -98,32 +94,32 @@ export default function SkinUploadForm() {
   };
 
   return (
-    <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-6">
+    <div className="p-1 md:p-3">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400">
           <Camera className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+          <h2 className="text-base md:text-xl font-bold text-zinc-900 dark:text-zinc-100">
             Analisis Foto Kulit
           </h2>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
             Upload foto wajah untuk analisis kondisi kulit
           </p>
         </div>
       </div>
 
       {/* Date Info */}
-      <div className="flex items-center gap-3 p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 mb-6">
+      <div className="flex items-center gap-3 p-3 md:p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 mb-6">
         <div className="p-2 rounded bg-white dark:bg-zinc-800">
           <Calendar className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
         </div>
         <div>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
             Log untuk tanggal
           </p>
-          <p className="font-medium text-zinc-900 dark:text-zinc-100">
+          <p className="text-sm md:text-base font-medium text-zinc-900 dark:text-zinc-100">
             {selectedDayData?.date.toLocaleDateString("id-ID", {
               weekday: "long",
               year: "numeric",
@@ -134,7 +130,7 @@ export default function SkinUploadForm() {
         </div>
         <div className="ml-auto flex items-center gap-2 text-green-600 dark:text-green-400">
           <CheckCircle className="w-4 h-4" />
-          <span className="text-sm font-medium">Log tersedia</span>
+          <span className="text-xs md:text-sm font-medium">Log tersedia</span>
         </div>
       </div>
 
@@ -185,15 +181,15 @@ export default function SkinUploadForm() {
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
                 <Camera className="w-8 h-8 text-zinc-400" />
               </div>
-              <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+              <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 mb-2">
                 Upload foto wajah Anda
               </p>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+              <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-4">
                 Format: JPG, PNG. Maks 5MB. Pastikan pencahayaan baik.
               </p>
-              <label className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg cursor-pointer transition-colors">
-                <Upload className="w-5 h-5" />
-                <span>Pilih Foto</span>
+              <label className="inline-flex items-center gap-2 px-4 md:px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg cursor-pointer transition-colors">
+                <Upload className="w-4 md:w-5 h-4 md:h-5" />
+                <span className="text-sm md:text-base">Pilih Foto</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -217,7 +213,7 @@ export default function SkinUploadForm() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-            <span>Tanpa makeup tebal</span>
+            <span>Tanpa menggunakan makeup</span>
           </div>
         </div>
       </div>
@@ -262,7 +258,9 @@ export default function SkinUploadForm() {
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>Analisis Kulit Sekarang</span>
+            <span className="text-sm md:text-base">
+              Analisis Kulit Sekarang
+            </span>
           </>
         )}
       </button>

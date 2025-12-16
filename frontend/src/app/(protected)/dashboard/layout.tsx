@@ -32,6 +32,7 @@ import SkinLogForm from "@/components/SkinLogForm";
 import { MdOutlineEditCalendar } from "react-icons/md";
 import { DateProvider } from "@/context/DateContext";
 import { SkinProvider } from "@/context/SkinContext";
+import LoadingScreen from "@/components/LoadingScreen";
 
 // Mock data untuk komponen
 const skinMetrics = [
@@ -140,19 +141,19 @@ export default function DashboardLayout({
     router.push("/signin");
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingScreen />;
 
   return (
     <DateProvider>
       <SkinProvider>
         <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors">
           {/* Top Navigation */}
-          <header className="sticky top-0 z-50 bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-700">
+          <header className="sticky top-0 z-40 bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-700">
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex items-center justify-between h-16">
                 {/* Logo & Mobile Menu */}
                 <div className="flex items-center gap-4">
-                  <button
+                  {/* <button
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                     className="md:hidden p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   >
@@ -161,7 +162,7 @@ export default function DashboardLayout({
                     ) : (
                       <Menu className="w-5 h-5" />
                     )}
-                  </button>
+                  </button> */}
 
                   <Link href="/dashboard" className="flex items-center gap-2">
                     {/* <div className="w-8 h-8 rounded-lg bg-cyan-600 flex items-center justify-center">
@@ -318,7 +319,7 @@ export default function DashboardLayout({
             )} */}
 
             {/* Main Content */}
-            <main className="flex-1 p-4 md:p-6">
+            <main className="flex-1 p-2 md:p-6">
               {/* <CalendarWeekly /> */}
 
               {/* Welcome & Quick Actions */}
@@ -475,7 +476,7 @@ export default function DashboardLayout({
                 </div> */}
               </div>
               {/* Skin Progress Chart Placeholder */}
-              <div className="max-w-7xl mx-auto mt-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
+              <div className="max-w-7xl mx-auto mt-0 md:mt-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-3 md:p-6">
                 {children}
 
                 {/* <div className="flex items-center justify-between mb-6">

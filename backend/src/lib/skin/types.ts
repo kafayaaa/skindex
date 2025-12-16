@@ -1,3 +1,14 @@
+export interface AnalysisResult {
+  id: number; // bigserial
+  photo_id: number; // bigint FK
+  user_id: string; // uuid
+  acne_score: number;
+  oilness_score: number;
+  redness_score: number;
+  moisture_score: number;
+  generated_at: string; // timestamptz
+}
+
 export type SkinCondition =
   | "balanced"
   | "oily"
@@ -29,3 +40,25 @@ export type RecommendationCategory =
   | "ingredient"
   | "lifestyle"
   | "warning";
+
+export interface SkinInsight {
+  id: number;
+  user_id: string;
+  analysis_result_id: number;
+
+  metric: "acne" | "oilness" | "redness" | "moisture";
+
+  change_type:
+    | "significant_improvement"
+    | "improvement"
+    | "stable"
+    | "worsening"
+    | "significant_worsening";
+
+  delta: number;
+
+  causes: string[];
+  recommendations: string[];
+
+  created_at: string;
+}

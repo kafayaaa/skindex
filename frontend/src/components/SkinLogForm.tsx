@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createSkinLog } from "@/services/skinLog.service";
 import { Calendar, Edit, Moon, Zap, Apple, Smile } from "lucide-react"; // Import icons
+import { useRouter } from "next/navigation";
 
 export default function SkinLogForm() {
   const [loading, setLoading] = useState(false);
@@ -13,21 +14,50 @@ export default function SkinLogForm() {
     notes: "",
     stress_level: 3,
     sleep_hours: 7,
+    sleep_start: "22:00",
+    sleep_end: "05:00",
     diet_notes: "",
     mood: "",
   });
+
+  const router = useRouter();
+
+  const calculateDuration = (start: string, end: string): number => {
+    const [startH, startM] = start.split(":").map(Number);
+    const [endH, endM] = end.split(":").map(Number);
+
+    const startDate = new Date(0, 0, 0, startH, startM);
+    const endDate = new Date(0, 0, 0, endH, endM);
+
+    if (endDate < startDate) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
+
+    const diffMs = endDate.getTime() - startDate.getTime();
+    return parseFloat((diffMs / (1000 * 60 * 60)).toFixed(1)); // Return dalam jam (misal 7.5)
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]:
-        name === "stress_level" || name === "sleep_hours"
-          ? Number(value)
-          : value,
-    }));
+
+    setForm((prev) => {
+      const newState = {
+        ...prev,
+        [name]: name === "stress_level" ? Number(value) : value,
+      };
+
+      // Jika yang berubah adalah jam tidur/bangun, hitung ulang sleep_hours
+      if (name === "sleep_start" || name === "sleep_end") {
+        newState.sleep_hours = calculateDuration(
+          newState.sleep_start,
+          newState.sleep_end
+        );
+      }
+
+      return newState;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,6 +74,7 @@ export default function SkinLogForm() {
         mood: form.mood || null,
       });
       alert("Log harian berhasil disimpan");
+      router.push("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message ?? "Gagal menyimpan log");
@@ -130,27 +161,50 @@ export default function SkinLogForm() {
             </div>
           </div>
 
-          {/* Sleep Hours */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+          {/* Sleep Section */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
               <Moon className="w-4 h-4" />
-              Jam Tidur
+              Waktu Tidur & Bangun
             </label>
-            <div className="relative">
-              <input
-                type="number"
-                name="sleep_hours"
-                step="0.5"
-                min="0"
-                max="24"
-                value={form.sleep_hours}
-                onChange={handleChange}
-                className="w-full pl-4 pr-12 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-              />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-zinc-400">
-                jam
-              </span>
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Jam Tidur */}
+              <div className="relative">
+                <span className="text-xs uppercase font-bold text-zinc-400">
+                  Mulai
+                </span>
+                <input
+                  type="time"
+                  name="sleep_start"
+                  value={form.sleep_start}
+                  onChange={handleChange}
+                  className="text-sm md:text-base w-full px-3 md:px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-cyan-500 transition-all"
+                />
+              </div>
+
+              {/* Jam Bangun */}
+              <div className="relative">
+                <span className="text-xs uppercase font-bold text-zinc-400">
+                  Bangun
+                </span>
+                <input
+                  type="time"
+                  name="sleep_end"
+                  value={form.sleep_end}
+                  onChange={handleChange}
+                  className="text-sm md:text-base w-full px-3 md:px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-cyan-500 transition-all"
+                />
+              </div>
             </div>
+
+            {/* Info Durasi Otomatis */}
+            <p className="text-sm text-zinc-400 font-medium">
+              Total durasi tidur:{" "}
+              <span className="text-cyan-600 font-bold">
+                {form.sleep_hours} jam
+              </span>
+            </p>
           </div>
         </div>
 
@@ -171,7 +225,7 @@ export default function SkinLogForm() {
         </div>
 
         {/* Mood */}
-        <div>
+        {/* <div>
           <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
             <Smile className="w-4 h-4" />
             Mood (Opsional)
@@ -183,7 +237,7 @@ export default function SkinLogForm() {
             onChange={handleChange}
             className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
           />
-        </div>
+        </div> */}
 
         {/* Error Display */}
         {error && (
