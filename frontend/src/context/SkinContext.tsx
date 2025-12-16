@@ -1,11 +1,14 @@
+import { EMPTY_SKIN_INSIGHT } from "@/constants/skinInsight";
 import { getAnalysisDetail } from "@/services/analysisDetail.service";
 import { getInterpretations } from "@/services/interpretation.service";
 import { getAnalyzeSkin } from "@/services/skin.service";
+import { getSkinInsight } from "@/services/skinInsight.service";
 import { getSkinLogs } from "@/services/skinLog.service";
 import {
   AnalysisDetail,
   AnalysisInterpretation,
   AnalysisResult,
+  SkinInsightResponse,
   SkinLog,
 } from "@/types/Skin";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -22,6 +25,9 @@ interface SkinContextProps {
 
   interpretations: AnalysisInterpretation[];
   setInterpretations: (interpretations: AnalysisInterpretation[]) => void;
+
+  skinInsight: SkinInsightResponse;
+  fetchSkinInsight: () => Promise<void>;
 
   loading: boolean;
   setLoading: (loading: boolean) => void;
@@ -40,6 +46,8 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
   const [interpretations, setInterpretations] = useState<
     AnalysisInterpretation[]
   >([]);
+  const [skinInsight, setSkinInsight] =
+    useState<SkinInsightResponse>(EMPTY_SKIN_INSIGHT);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,6 +101,16 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const fetchSkinInsight = async () => {
+    try {
+      const data = await getSkinInsight();
+      setSkinInsight(data);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
   useEffect(() => {
     const fetchInterpretations = async () => {
       try {
@@ -107,6 +125,10 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     fetchInterpretations();
   }, []);
 
+  useEffect(() => {
+    fetchSkinInsight();
+  }, []);
+
   return (
     <SkinContext.Provider
       value={{
@@ -118,6 +140,8 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
         fetchAnalysisDetail,
         interpretations,
         setInterpretations,
+        skinInsight,
+        fetchSkinInsight,
         loading,
         setLoading,
         error,

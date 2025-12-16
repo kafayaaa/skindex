@@ -7,9 +7,15 @@ import multer from "multer";
 import healthRoute from "./routes/health.route";
 import skinCheckRoute from "./routes/skin-check.route";
 import skinRouter from "./routes/skin.route";
+import skinInsightRoutes from "./routes/skinInsight.route";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // frontend Next.js
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // File upload (multer)
@@ -19,6 +25,7 @@ const upload = multer({ dest: "uploads/" });
 app.use("/health", healthRoute);
 app.use("/api/skin-check", skinCheckRoute);
 app.use("/api/skin", skinRouter);
+app.use("/api/skin-insight", skinInsightRoutes);
 
 // Example endpoint using multer
 app.post("/upload", upload.single("image"), (req, res) => {

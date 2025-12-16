@@ -23,10 +23,10 @@ export default function DailyLog({ date }: { date: Date }) {
   if (filteredLogs.length === 0) {
     return (
       <div className="text-center py-6">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
+        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-3">
           Belum ada catatan nih hari ini
         </p>
-        <button className="text-xl font-semibold text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300">
+        <button className="text-lg md:text-xl font-semibold text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300">
           Tambah catatan dulu yuk!
         </button>
       </div>
@@ -38,23 +38,23 @@ export default function DailyLog({ date }: { date: Date }) {
       {filteredLogs.map((log) => (
         <div key={log.id}>
           <div className="text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 rounded-lg p-4">
-            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">
+            <p className="text-xs md:text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">
               Log Hari Ini
             </p>
 
             <div className="mb-4">
-              <div className="flex items-center gap-2">
-                <MdOutlineStickyNote2 className="text-xl text-amber-500" />
-                <p>Catatan:</p>
+              <div className="flex items-center gap-2 mb-1">
+                <MdOutlineStickyNote2 className="text-lg md:text-xl text-amber-500" />
+                <p className="text-sm md:text-base">Catatan:</p>
               </div>
-              <p className="">{log.notes}</p>
+              <p className="text-sm md:text-base">{log.notes}</p>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <PiForkKnifeBold className="text-xl text-rose-500" />
-                <p>Diet:</p>
+              <div className="flex items-center gap-2 mb-1">
+                <PiForkKnifeBold className="text-lg md:text-xl text-rose-500" />
+                <p className="text-sm md:text-base">Diet:</p>
               </div>
-              <p className="">{log.diet_notes}</p>
+              <p className="text-sm md:text-base">{log.diet_notes}</p>
             </div>
           </div>
         </div>

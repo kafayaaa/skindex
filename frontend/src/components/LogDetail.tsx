@@ -7,11 +7,20 @@ import SkinProgressCard from "./SkinProgressCard";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { LuDroplets } from "react-icons/lu";
 import { GiHeatHaze, GiNightSleep } from "react-icons/gi";
-import { TbDroplets, TbMoodPuzzled } from "react-icons/tb";
+import {
+  TbDroplets,
+  TbMoodPuzzled,
+  TbPhotoCheck,
+  TbPhotoSearch,
+} from "react-icons/tb";
 import { useSkin } from "@/context/SkinContext";
 import Link from "next/link";
 import { useEffect } from "react";
 import { generateRecommendations } from "@/utils/recommendationEngine";
+import { FaPlus } from "react-icons/fa6";
+import { SkinInsightSection } from "./SkinInsightSection";
+import { SkinInsightResponse } from "@/types/Skin";
+import LoadingScreen from "./LoadingScreen";
 
 export default function LogDetail({ date }: { date: Date }) {
   const { selectedDayData, selectedDay, getRatingColor } = useDate();
@@ -21,10 +30,10 @@ export default function LogDetail({ date }: { date: Date }) {
     analysisDetails,
     fetchAnalysisDetail,
     interpretations,
+    skinInsight,
     loading,
     error,
   } = useSkin();
-  console.log("INTERPRETATIONS RAW:", interpretations);
 
   const formatDateToISO = (d: Date): string => {
     const year = d.getFullYear();
@@ -67,19 +76,19 @@ export default function LogDetail({ date }: { date: Date }) {
     (i) => i.generated_at && i.generated_at?.startsWith(selectedDateISO)
   );
 
-  if (loading) return <p>Memuat log...</p>;
+  if (loading) return <LoadingScreen />;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-5">
+    <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl px-3 py-5 md:p-5">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
         {/* Left Column - Day Info */}
         <div className="w-full">
-          <div className="grid grid-cols-12 gap-4 mb-6">
-            <div className="col-span-6 flex items-center gap-3 mb-4">
+          <div className="grid md:grid-cols-12 gap-4 mb-6">
+            <div className="col-span-6 flex justify-center md:justify-start items-center gap-2 md:gap-3 md:mb-4">
               <div
                 className={`
-                w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold
+                w-9 md:w-12 h-9 md:h-12 rounded-xl flex items-center justify-center text-lg font-bold
                 ${
                   selectedDayData?.isToday
                     ? "bg-cyan-500 text-white"
@@ -90,10 +99,10 @@ export default function LogDetail({ date }: { date: Date }) {
                 {selectedDayData?.dateNumber}
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                <h3 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">
                   {selectedDayData?.dayName}
                 </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
                   {selectedDayData?.date.toLocaleDateString("id-ID", {
                     year: "numeric",
                     month: "long",
@@ -102,59 +111,100 @@ export default function LogDetail({ date }: { date: Date }) {
               </div>
             </div>
 
-            <div className="col-span-3 p-3 rounded-lg bg-white dark:bg-zinc-800">
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">
-                Log Skincare
-              </p>
-              <div className="flex items-center gap-2">
-                {filteredLogs.length > 0 ? (
-                  <>
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="font-medium text-green-600 dark:text-green-400">
-                      Tercatat
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="w-5 h-5 text-red-500" />
-                    <span className="font-medium text-red-600 dark:text-red-400">
-                      Belum
-                    </span>
-                  </>
-                )}
+            <div className="col-span-6 grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="p-3 rounded-lg bg-white dark:bg-zinc-800">
+                <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-1">
+                  Log Harian
+                </p>
+                <div className="flex items-center gap-2 text-sm md:text-base">
+                  {filteredLogs.length > 0 ? (
+                    <>
+                      <CheckCircle className="w-4 md:w-5 h-4 md:h-5 text-green-500" />
+                      <span className="text-sm md:text-base font-medium text-green-600 dark:text-green-400">
+                        Tercatat
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="w-4 md:w-5 h-4 md:h-5 text-red-500" />
+                      <span className="text-sm md:text-base font-medium text-red-600 dark:text-red-400">
+                        Belum
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="col-span-3 p-3 rounded-lg bg-white dark:bg-zinc-800">
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">
-                Analisis Foto
-              </p>
-              <div className="flex items-center gap-2">
-                {filteredAnalysis.length > 0 ? (
-                  <>
-                    <Camera className="w-5 h-5 text-blue-500" />
-                    <span className="font-medium text-blue-600 dark:text-blue-400">
-                      Selesai
-                    </span>
-                  </>
+              <div className="p-3 rounded-lg bg-white dark:bg-zinc-800">
+                <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-1">
+                  Analisis Foto
+                </p>
+                <div className="flex items-center gap-2">
+                  {filteredAnalysis.length > 0 ? (
+                    <>
+                      <Camera className="w-4 md:w-5 h-4 md:h-5 text-blue-500" />
+                      <span className="text-sm md:text-base font-medium text-blue-600 dark:text-blue-400">
+                        Selesai
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Camera className="w-4 md:w-5 h-4 md:h-5 text-zinc-400" />
+                      <span className="text-sm md:text-base font-medium text-zinc-500 dark:text-zinc-400">
+                        Belum
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="hidden md:block space-y-3">
+                {filteredLogs.length > 0 ? (
+                  <button
+                    className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
+                    disabled={true}
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Log harian terisi</span>
+                  </button>
                 ) : (
-                  <>
-                    <Camera className="w-5 h-5 text-zinc-400" />
-                    <span className="font-medium text-zinc-500 dark:text-zinc-400">
-                      Belum
-                    </span>
-                  </>
+                  <Link
+                    href="/dashboard/daily-log"
+                    className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-cyan-600 hover:bg-cyan-700 text-white`}
+                  >
+                    <FaPlus className="w-4 h-4" />
+                    <span>Log Harian</span>
+                  </Link>
+                )}
+
+                {filteredAnalysis.length > 0 ? (
+                  <button
+                    className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
+                    disabled={true}
+                  >
+                    <TbPhotoCheck className="w-4 h-4" />
+                    <span>Analisis selesai</span>
+                  </button>
+                ) : (
+                  <Link
+                    href="/dashboard/analysis"
+                    className="text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 border border-cyan-600 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
+                  >
+                    <TbPhotoSearch className="w-4 h-4" />
+                    <span>Analisis</span>
+                  </Link>
                 )}
               </div>
             </div>
           </div>
 
           {/* Day Status */}
-          <div className="grid grid-cols-6 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
             {filteredAnalysis.map((analysis) => (
               <div
                 key={analysis.id}
-                className="col-span-4 grid grid-cols-4 gap-4"
+                className="col-span-2 md:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-4"
               >
                 <SkinProgressCard
                   icon={
@@ -219,7 +269,7 @@ export default function LogDetail({ date }: { date: Date }) {
 
           {/* Interpretation */}
           {todayInterpretation && (
-            <div className="mt-6 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-2xl border border-cyan-200 dark:border-cyan-800 p-6">
+            <div className="mt-6 bg-linear-to-br from-cyan-50/50 to-blue-50/50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-2xl border border-cyan-200 dark:border-cyan-800 p-3 md:p-6">
               {/* Header */}
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm">
@@ -238,10 +288,10 @@ export default function LogDetail({ date }: { date: Date }) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-100">
+                  <h3 className="font-bold text-base md:text-lg text-zinc-900 dark:text-zinc-100">
                     Interpretasi Kulit Hari Ini
                   </h3>
-                  <p className="text-sm text-cyan-600 dark:text-cyan-400">
+                  <p className="text-xs md:text-sm text-cyan-600 dark:text-cyan-400">
                     Berdasarkan analisis terbaru
                   </p>
                 </div>
@@ -249,7 +299,7 @@ export default function LogDetail({ date }: { date: Date }) {
 
               {/* Overview Section */}
               <div className="mb-6 p-4 rounded-lg bg-white/60 dark:bg-zinc-800/60 backdrop-blur-sm">
-                <p className="text-zinc-700 dark:text-zinc-300 mb-4">
+                <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 mb-4">
                   {todayInterpretation.intro_text}
                 </p>
 
@@ -258,7 +308,7 @@ export default function LogDetail({ date }: { date: Date }) {
                     <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">
                       Masalah Utama
                     </p>
-                    <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                    <p className="text-sm md:text-base font-medium text-zinc-900 dark:text-zinc-100">
                       {todayInterpretation.concerns}
                     </p>
                   </div>
@@ -281,7 +331,7 @@ export default function LogDetail({ date }: { date: Date }) {
                             : "bg-red-500"
                         }`}
                       />
-                      <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="text-sm md:text-base font-medium text-zinc-900 dark:text-zinc-100">
                         {todayInterpretation.severity}
                       </p>
                     </div>
@@ -291,7 +341,7 @@ export default function LogDetail({ date }: { date: Date }) {
 
               {/* Recommendations Section */}
               <div className="mb-6">
-                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                <h4 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
                   <svg
                     className="w-4 h-4 text-cyan-600 dark:text-cyan-400"
                     fill="none"
@@ -312,7 +362,7 @@ export default function LogDetail({ date }: { date: Date }) {
                   {todayInterpretation.recommendations.map((rec, idx) => (
                     <div
                       key={idx}
-                      className={`p-4 rounded-xl border transition-all hover:scale-[1.02] ${
+                      className={`p-4 rounded-xl border ${
                         rec.priority === 1
                           ? "border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10"
                           : rec.priority === 2
@@ -321,11 +371,11 @@ export default function LogDetail({ date }: { date: Date }) {
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <h5 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                        <h5 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100">
                           {rec.title}
                         </h5>
                         <span
-                          className={`text-xs font-medium px-2 py-1 rounded-full ${
+                          className={`text-xs text-center md:text-left font-medium px-2 py-1 rounded-xl md:rounded-full ${
                             rec.priority === 1
                               ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
                               : rec.priority === 2
@@ -340,7 +390,7 @@ export default function LogDetail({ date }: { date: Date }) {
                             : "Prioritas Rendah"}
                         </span>
                       </div>
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                      <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400">
                         {rec.description}
                       </p>
                     </div>
@@ -350,7 +400,7 @@ export default function LogDetail({ date }: { date: Date }) {
 
               {/* Quick Tips */}
               <div>
-                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                <h4 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
                   <svg
                     className="w-4 h-4 text-cyan-600 dark:text-cyan-400"
                     fill="none"
@@ -376,12 +426,12 @@ export default function LogDetail({ date }: { date: Date }) {
                       key={idx}
                       className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-zinc-800/50 hover:bg-white dark:hover:bg-zinc-800 transition-colors"
                     >
-                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mt-0.5">
+                      <div className="shrink-0 w-6 h-6 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mt-0.5">
                         <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400">
                           {idx + 1}
                         </span>
                       </div>
-                      <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300">
                         {rec}
                       </p>
                     </div>
@@ -403,10 +453,13 @@ export default function LogDetail({ date }: { date: Date }) {
               </div> */}
             </div>
           )}
+
+          {/* Skin Analysis Insight */}
+          <SkinInsightSection data={skinInsight} />
         </div>
 
         {/* Right Column - Quick Actions & Skin Rating */}
-        <div className="md:w-64 space-y-6">
+        <div className="block md:hidden md:w-64 space-y-6">
           {/* Skin Rating */}
           {/* <div className="p-4 rounded-lg bg-white dark:bg-zinc-800">
             <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
@@ -451,7 +504,7 @@ export default function LogDetail({ date }: { date: Date }) {
           <div className="space-y-3">
             {filteredLogs.length > 0 ? (
               <button
-                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
+                className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
                 disabled={true}
               >
                 <CheckCircle className="w-4 h-4" />
@@ -460,27 +513,27 @@ export default function LogDetail({ date }: { date: Date }) {
             ) : (
               <Link
                 href="/dashboard/daily-log"
-                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-cyan-600 hover:bg-cyan-700 text-white`}
+                className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-cyan-600 hover:bg-cyan-700 text-white`}
               >
-                <CheckCircle className="w-4 h-4" />
+                <FaPlus className="w-4 h-4" />
                 <span>Tambah Log Harian</span>
               </Link>
             )}
 
             {filteredAnalysis.length > 0 ? (
               <button
-                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
+                className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
                 disabled={true}
               >
-                <Camera className="w-4 h-4" />
+                <TbPhotoCheck className="w-4 h-4" />
                 <span>Analisis foto selesai</span>
               </button>
             ) : (
               <Link
                 href="/dashboard/analysis"
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-cyan-600 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
+                className="text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 border border-cyan-600 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
               >
-                <Camera className="w-4 h-4" />
+                <TbPhotoSearch className="w-4 h-4" />
                 <span>Analisis Foto</span>
               </Link>
             )}

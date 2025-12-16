@@ -176,3 +176,29 @@ export interface AnalysisDetail {
   severity: "low" | "moderate" | "high";
   analysis_recommendations: Recommendation[];
 }
+
+export type InsightReason =
+  | "ok"
+  | "no_analysis"
+  | "first_analysis"
+  | "missing_skin_log";
+
+export type SkinMetric =
+  | "acne_score"
+  | "oilness_score"
+  | "redness_score"
+  | "moisture_score";
+
+export interface SkinInsightItem {
+  metric: SkinMetric;
+  status: "improved" | "worsened" | "stable";
+  delta: number;
+  causes: string[];
+  recommendations: string[];
+}
+
+export interface SkinInsightResponse {
+  date: string | null;
+  reason: InsightReason;
+  insights: SkinInsightItem[];
+}
