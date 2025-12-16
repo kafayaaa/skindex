@@ -216,38 +216,191 @@ export default function LogDetail({ date }: { date: Date }) {
 
           {/* Notes */}
           <DailyLog date={selectedDayData?.date ?? selectedDay} />
-          {todayInterpretation && (
-            <div className="mt-6 p-4 rounded-xl bg-cyan-50 dark:bg-cyan-900/30">
-              <h3 className="font-semibold text-cyan-700 dark:text-cyan-300 mb-2">
-                Catatan Kulit Hari Ini
-              </h3>
 
-              <p className="text-sm mb-3">{todayInterpretation.intro_text}</p>
-              <p>{todayInterpretation.concerns}</p>
-              <p>{todayInterpretation.severity}</p>
-              {todayInterpretation.recommendations.map((rec, idx) => (
-                <div key={idx} className="mb-4">
-                  <h4 className="font-semibold text-zinc-800 dark:text-zinc-200">
-                    {rec.title}
-                    {/* Opsional: Tampilkan Priority */}
-                    <span className={`ml-2 text-xs font-normal text-cyan-600`}>
-                      (Priority: {rec.priority})
-                    </span>
-                  </h4>
-                  <p className="text-zinc-600 dark:text-zinc-400">
-                    {rec.description}
+          {/* Interpretation */}
+          {todayInterpretation && (
+            <div className="mt-6 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-2xl border border-cyan-200 dark:border-cyan-800 p-6">
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm">
+                  <svg
+                    className="w-5 h-5 text-cyan-600 dark:text-cyan-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-100">
+                    Interpretasi Kulit Hari Ini
+                  </h3>
+                  <p className="text-sm text-cyan-600 dark:text-cyan-400">
+                    Berdasarkan analisis terbaru
                   </p>
                 </div>
-              ))}
+              </div>
 
-              <ul className="list-disc ml-5 space-y-1 text-sm">
-                {generateRecommendations(
-                  todayInterpretation.severity,
-                  todayInterpretation.concerns
-                ).map((rec, idx) => (
-                  <li key={idx}>{rec}</li>
-                ))}
-              </ul>
+              {/* Overview Section */}
+              <div className="mb-6 p-4 rounded-lg bg-white/60 dark:bg-zinc-800/60 backdrop-blur-sm">
+                <p className="text-zinc-700 dark:text-zinc-300 mb-4">
+                  {todayInterpretation.intro_text}
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-3 rounded-lg bg-cyan-50/50 dark:bg-cyan-900/20">
+                    <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">
+                      Masalah Utama
+                    </p>
+                    <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                      {todayInterpretation.concerns}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-cyan-50/50 dark:bg-cyan-900/20">
+                    <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">
+                      Tingkat Keparahan
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full ${
+                          todayInterpretation.severity
+                            .toLowerCase()
+                            .includes("ringan")
+                            ? "bg-green-500"
+                            : todayInterpretation.severity
+                                .toLowerCase()
+                                .includes("sedang")
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
+                        }`}
+                      />
+                      <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                        {todayInterpretation.severity}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recommendations Section */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                  <svg
+                    className="w-4 h-4 text-cyan-600 dark:text-cyan-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                  Rekomendasi Perawatan
+                </h4>
+
+                <div className="space-y-4">
+                  {todayInterpretation.recommendations.map((rec, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-4 rounded-xl border transition-all hover:scale-[1.02] ${
+                        rec.priority === 1
+                          ? "border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10"
+                          : rec.priority === 2
+                          ? "border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-900/10"
+                          : "border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <h5 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                          {rec.title}
+                        </h5>
+                        <span
+                          className={`text-xs font-medium px-2 py-1 rounded-full ${
+                            rec.priority === 1
+                              ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                              : rec.priority === 2
+                              ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400"
+                              : "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                          }`}
+                        >
+                          {rec.priority === 1
+                            ? "Prioritas Tinggi"
+                            : rec.priority === 2
+                            ? "Prioritas Sedang"
+                            : "Prioritas Rendah"}
+                        </span>
+                      </div>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        {rec.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick Tips */}
+              <div>
+                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                  <svg
+                    className="w-4 h-4 text-cyan-600 dark:text-cyan-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  Tips Cepat Harian
+                </h4>
+
+                <div className="space-y-3">
+                  {generateRecommendations(
+                    todayInterpretation.severity,
+                    todayInterpretation.concerns
+                  ).map((rec, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-zinc-800/50 hover:bg-white dark:hover:bg-zinc-800 transition-colors"
+                    >
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mt-0.5">
+                        <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400">
+                          {idx + 1}
+                        </span>
+                      </div>
+                      <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                        {rec}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer */}
+              {/* <div className="mt-6 pt-6 border-t border-cyan-200 dark:border-cyan-800">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="text-zinc-500 dark:text-zinc-400">
+                    Terakhir diperbarui:{" "}
+                    {new Date().toLocaleDateString("id-ID")}
+                  </div>
+                  <button className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 text-sm font-medium">
+                    Simpan Rekomendasi
+                  </button>
+                </div>
+              </div> */}
             </div>
           )}
         </div>
