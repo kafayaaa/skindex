@@ -1,9 +1,13 @@
 export type SkinType =
   | "kering"
+  | "dry"
   | "berminyak"
+  | "oily"
   | "normal"
   | "sensitif"
+  | "sensitive"
   | "kombinasi"
+  | "combination"
   | "tidak diketahui";
 
 export type AnalysisStatus = "pending" | "processing" | "completed" | "failed";
@@ -19,12 +23,23 @@ export type TriggerType = "diet" | "stress" | "sleep" | "product";
 export type SubscriptionPlan = "free" | "premium";
 
 export interface Profile {
-  id: string; // uuid (PK) = auth.users.id
-  created_at: string; // timestamptz
-  username?: string | null; // optional
+  id?: string; // uuid (PK) = auth.users.id
+  photo?: string;
+  username: string | null; // optional
   skin_type: SkinType; // enum
-  dob: string; // date
-  is_premium: boolean;
+  dob: Date; // date
+  is_premium?: boolean;
+  created_at?: string; // timestamptz
+}
+
+export interface EditableProfile {
+  id?: string;
+  username: string; // selalu string
+  photo: string | null;
+  skin_type: SkinType;
+  dob: Date;
+  is_premium?: boolean;
+  created_at?: string;
 }
 
 export interface SkinLog {
