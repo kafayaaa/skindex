@@ -1,4 +1,4 @@
-import { SkinConcern, SkinCondition } from "./types";
+import { SkinConcern, SkinCondition } from "../../types/types";
 
 type Level = "low" | "medium" | "high";
 
@@ -9,12 +9,12 @@ function level(score: number): Level {
 }
 
 function determineSkinCondition(scores: {
-  oilness: number;
+  oiliness: number;
   moisture: number;
   acne: number;
   redness: number;
 }): SkinCondition {
-  const oil = level(scores.oilness);
+  const oil = level(scores.oiliness);
   const moisture = level(scores.moisture);
   const acne = level(scores.acne);
   const redness = level(scores.redness);

@@ -37,7 +37,7 @@ export default function DailyLog({ date }: { date: Date }) {
     <div>
       {filteredLogs.map((log) => (
         <div key={log.id}>
-          <div className="text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 rounded-lg p-4">
+          <div className="text-zinc-700 dark:text-zinc-300 bg-zinc-100/70 dark:bg-zinc-800 rounded-lg p-4">
             <p className="text-xs md:text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">
               Log Hari Ini
             </p>

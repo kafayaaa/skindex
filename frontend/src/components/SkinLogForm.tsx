@@ -74,7 +74,7 @@ export default function SkinLogForm() {
         mood: form.mood || null,
       });
       alert("Log harian berhasil disimpan");
-      router.push("/dashboard");
+      router.push("/dashboard/analysis");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message ?? "Gagal menyimpan log");

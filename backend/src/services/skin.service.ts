@@ -1,10 +1,16 @@
 import { ai } from "../utils/gemini";
 
 export interface GeminiSkinResult {
-  acne_score: number;
-  oiliness_score: number;
-  redness_score: number;
-  moisture_score: number;
+  scores: {
+    acne_score: number;
+    oiliness_score: number;
+    redness_score: number;
+    moisture_score: number;
+  };
+  locations: {
+    acne: string[];
+    redness: string[];
+  };
 }
 
 function extractJson(text: string) {
@@ -18,17 +24,93 @@ export async function analyzeSkinWithGemini(
   imageBase64: string
 ): Promise<GeminiSkinResult> {
   const prompt = `
-    You are a dermatology AI.
-    Your task is to analyze facial skin and evaluate its condition based on several parameters.
-    For each parameter, you MUST return a score from **1 (worst condition)** to **10 (best condition)**.
+    You are a clinical skin analysis AI using visual inspection only.
+    You are analyzing a REAL facial photograph.
 
-    Return ONLY valid JSON:
+    IMPORTANT — SCORING PHILOSOPHY (MUST FOLLOW):
+    For acne, redness, and oiliness:
+    - LOWER score = HEALTHIER skin
+    - HIGHER score = WORSE condition
+
+    For moisture:
+    - LOWER score = DRY skin
+    - HIGHER score = HEALTHY & hydrated skin
+
+    DO NOT normalize skin conditions.
+    If acne or redness is clearly visible, scores MUST reflect that.
+
+    --------------------
+    SCORING RULES
+    --------------------
+
+    ACNE SCORE (1 = clear skin, 10 = severe acne):
+    - 1–2: clear skin, no visible acne
+    - 3–4: very mild acne (1–2 small pimples)
+    - 5–6: moderate acne, several visible lesions
+    - 7–8: many inflammatory pimples, widespread
+    - 9–10: severe acne, dense inflammation or cystic acne
+
+    REDNESS SCORE (1 = calm skin, 10 = severe redness):
+    - 1–2: no visible redness
+    - 3–4: very mild redness
+    - 5–6: noticeable redness
+    - 7–8: strong redness with inflammation
+    - 9–10: severe, widespread redness
+
+    OILINESS SCORE (1 = balanced, 10 = very oily):
+    - 1–2: matte / well-balanced skin
+    - 3–4: slightly oily
+    - 5–6: visibly oily
+    - 7–8: very oily with shine
+    - 9–10: extreme oiliness
+
+    MOISTURE SCORE (1 = very dry, 10 = well hydrated):
+    - 1–2: very dry, flaky
+    - 3–4: dry
+    - 5–6: normal
+    - 7–8: well hydrated
+    - 9–10: very healthy, plump skin
+
+    --------------------
+    LOCATION ANALYSIS
+    --------------------
+
+    Identify where acne and redness are visible.
+    Use ONLY these location labels:
+    - forehead
+    - nose
+    - chin
+    - left_cheek
+    - right_cheek
+    - jawline
+
+    If a condition is not visible in a location, return an empty array.
+
+    --------------------
+    STRICT RULES
+    --------------------
+    - Base analysis ONLY on what is visible.
+    - Be clinically honest.
+    - Do NOT soften results.
+    - Return ONLY valid JSON.
+    - NO markdown.
+    - NO explanation text.
+
+    --------------------
+    OUTPUT FORMAT
+    --------------------
 
     {
-      "acne_score": number, // Scale: 1 (severe acne) to 10 (clear skin)
-      "oiliness_score": number, // Scale: 1 (very oily) to 10 (perfectly balanced/matte)
-      "redness_score": number, // Scale: 1 (severe redness/inflammation) to 10 (calm skin)
-      "moisture_score": number // Scale: 1 (very dry/dehydrated) to 10 (well-hydrated/moisturized)
+      "scores": {
+        "acne_score": number,
+        "redness_score": number,
+        "oiliness_score": number,
+        "moisture_score": number
+      },
+      "locations": {
+        "acne": string[],
+        "redness": string[]
+      }
     }
   `;
 

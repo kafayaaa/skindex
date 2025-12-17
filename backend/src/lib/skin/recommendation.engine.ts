@@ -5,7 +5,7 @@ import {
   moistureRecommendations,
 } from "./recommendation.copy";
 import { getSeverity } from "./severity";
-import { SkinConcern, RecommendationCategory } from "./types";
+import { SkinConcern, RecommendationCategory } from "../../types/types";
 
 export function generateRecommendations(
   concerns: SkinConcern[],

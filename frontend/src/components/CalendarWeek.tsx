@@ -10,7 +10,11 @@ import { useDate } from "@/context/DateContext";
 import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useSkin } from "@/context/SkinContext";
 
-export default function CalendarWeekly() {
+export default function CalendarWeekly({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const {
     selectedDay,
     setSelectedDay,
@@ -142,7 +146,7 @@ export default function CalendarWeekly() {
           const hasLogForDay = dayLogs.length > 0;
 
           // analysis
-          const dayAnalysis = analysis.filter(
+          const dayAnalysis = (analysis ?? []).filter(
             (a) => formatISODateOnly(a.generated_at) === currentDayString
           );
           const hasAnalysisForDay = dayAnalysis.length > 0;
@@ -161,7 +165,7 @@ export default function CalendarWeekly() {
                     ? "bg-cyan-100 dark:bg-cyan-900/50 border-2 border-cyan-500"
                     : day.isToday
                     ? "bg-cyan-50 dark:bg-cyan-900/30 border border-cyan-200 dark:border-cyan-800"
-                    : "bg-zinc-50 dark:bg-zinc-900/30 hover:bg-zinc-100 dark:hover:bg-zinc-700/50"
+                    : "bg-white border border-zinc-200 dark:bg-zinc-700/30 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700/50"
                 }
               `}
             >
@@ -258,8 +262,7 @@ export default function CalendarWeekly() {
       </div>
 
       {/* Selected Day Details */}
-      <LogDetail date={selectedDayData?.date ?? selectedDay} />
-
+      {children}
       {/* Week Navigation Tips */}
       <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700 text-center">
         <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">

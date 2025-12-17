@@ -1,5 +1,5 @@
 import { concernThreshold } from "./concern.config";
-import { SkinConcern } from "./types";
+import { SkinConcern } from "../../types/types";
 
 export function mapConcernsFromScore(scores: {
   acne: number;

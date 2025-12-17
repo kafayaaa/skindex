@@ -27,10 +27,14 @@ interface SkinContextProps {
   setInterpretations: (interpretations: AnalysisInterpretation[]) => void;
 
   skinInsight: SkinInsightResponse;
-  fetchSkinInsight: () => Promise<void>;
+  fetchSkinInsight: (date?: string) => Promise<void>;
 
   loading: boolean;
   setLoading: (loading: boolean) => void;
+
+  insightLoading: boolean;
+  setInsightLoading: (loading: boolean) => void;
+
   error: string | null;
   setError: (error: string | null) => void;
 }
@@ -50,6 +54,7 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     useState<SkinInsightResponse>(EMPTY_SKIN_INSIGHT);
 
   const [loading, setLoading] = useState(true);
+  const [insightLoading, setInsightLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -101,13 +106,16 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const fetchSkinInsight = async () => {
+  const fetchSkinInsight = async (date?: string) => {
     try {
-      const data = await getSkinInsight();
+      setInsightLoading(true);
+      const data = await getSkinInsight(date);
       setSkinInsight(data);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setInsightLoading(false);
     }
   };
 
@@ -144,6 +152,8 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
         fetchSkinInsight,
         loading,
         setLoading,
+        insightLoading,
+        setInsightLoading,
         error,
         setError,
       }}

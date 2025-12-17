@@ -1,4 +1,4 @@
-import { AnalysisResult } from "./types";
+import { AnalysisResult } from "../../types/types";
 
 export function classifyChange(delta: number) {
   if (delta >= 10) return "significant_worsening";
@@ -10,7 +10,7 @@ export function classifyChange(delta: number) {
 
 export const METRIC_FIELD_MAP = {
   acne: "acne_score",
-  oilness: "oilness_score",
+  oiliness: "oiliness_score",
   redness: "redness_score",
   moisture: "moisture_score",
 } as const;
