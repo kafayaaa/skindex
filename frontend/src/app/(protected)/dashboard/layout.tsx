@@ -1,112 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Camera,
-  BarChart3,
-  Calendar,
-  Search,
-  ChevronRight,
-  TrendingUp,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  User,
-  Settings,
-  LogOut,
-  Bell,
-  Menu,
-  X,
-  Activity,
-  Droplets,
-  Shield,
-} from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import CalendarFull from "@/components/Calendar";
-import CalendarMini from "@/components/CalendarMini";
-import CalendarWeekly from "@/components/CalendarWeek";
-import SkinLogForm from "@/components/SkinLogForm";
-import { MdOutlineEditCalendar } from "react-icons/md";
 import { DateProvider } from "@/context/DateContext";
 import { SkinProvider } from "@/context/SkinContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import ToggleTheme from "@/components/ToggleTheme";
+import { ProfileProvider, useProfile } from "@/context/ProfileContext";
+import Navbar from "@/components/Navbar";
 
 // Mock data untuk komponen
-const skinMetrics = [
-  {
-    name: "Kelembapan",
-    value: 78,
-    unit: "%",
-    trend: "up",
-    icon: <Droplets className="w-5 h-5" />,
-    color: "text-blue-500",
-  },
-  {
-    name: "Jerawat Aktif",
-    value: 2,
-    unit: "",
-    trend: "down",
-    icon: <AlertCircle className="w-5 h-5" />,
-    color: "text-red-500",
-  },
-  {
-    name: "Kesehatan",
-    value: 85,
-    unit: "%",
-    trend: "up",
-    icon: <Activity className="w-5 h-5" />,
-    color: "text-green-500",
-  },
-  {
-    name: "Perlindungan",
-    value: 92,
-    unit: "%",
-    trend: "stable",
-    icon: <Shield className="w-5 h-5" />,
-    color: "text-cyan-500",
-  },
-];
-
-const recentActivities = [
-  {
-    id: 1,
-    action: "Analisis foto kulit",
-    time: "2 jam lalu",
-    status: "completed",
-  },
-  {
-    id: 2,
-    action: "Menambahkan log skincare",
-    time: "Kemarin",
-    status: "completed",
-  },
-  {
-    id: 3,
-    action: "Identifikasi pemicu baru",
-    time: "3 hari lalu",
-    status: "completed",
-  },
-  { id: 4, action: "Analisis mingguan", time: "Besok", status: "pending" },
-];
-
-const skinTips = [
-  "Gunakan sunscreen setiap hari, bahkan di dalam ruangan",
-  "Minum 2L air untuk menjaga hidrasi kulit",
-  "Bersihkan wajah sebelum tidur",
-  "Hindari menyentuh wajah dengan tangan kotor",
-];
-
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState("week");
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
@@ -131,80 +43,19 @@ export default function DashboardLayout({
     });
   }, [router]);
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    router.push("/signin");
-  };
-
   if (loading) return <LoadingScreen />;
 
   return (
-    <DateProvider>
-      <SkinProvider>
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors">
-          {/* Top Navigation */}
-          <header className="sticky top-0 z-40 bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-700">
-            <div className="max-w-7xl mx-auto px-4">
-              <div className="flex items-center justify-between h-16">
-                {/* Logo & Mobile Menu */}
-                <div className="flex items-center gap-4">
-                  {/* <button
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="md:hidden p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  >
-                    {sidebarOpen ? (
-                      <X className="w-5 h-5" />
-                    ) : (
-                      <Menu className="w-5 h-5" />
-                    )}
-                  </button> */}
+    <ProfileProvider>
+      <DateProvider>
+        <SkinProvider>
+          <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors">
+            {/* Top Navigation */}
+            <Navbar />
 
-                  <Link href="/dashboard" className="flex items-center gap-2">
-                    {/* <div className="w-8 h-8 rounded-lg bg-cyan-600 flex items-center justify-center">
-                    <span className="text-white font-bold">S</span>
-                    </div> */}
-                    <span className="text-xl font-bold">Skindex</span>
-                  </Link>
-                </div>
-
-                {/* Right Actions */}
-                <div className="flex items-center gap-4">
-                  {/* <button className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 relative">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button> */}
-                  <ToggleTheme />
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
-                      <User className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                    </div>
-                    <div className="hidden md:flex items-center gap-5">
-                      <p className="text-sm font-medium">{user?.email}</p>
-                      {/* <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Pengguna Premium
-                    </p> */}
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 dark:text-red-400"
-                      >
-                        <LogOut className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
-
-          <div className="flex">
-            {/* Sidebar - Desktop */}
-            {/* <aside className="hidden md:block w-64 min-h-[calc(100vh-4rem)] border-r border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50">
+            <div className="flex">
+              {/* Sidebar - Desktop */}
+              {/* <aside className="hidden md:block w-64 min-h-[calc(100vh-4rem)] border-r border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50">
               <div className="p-6">
                 <nav className="space-y-2">
                   <Link
@@ -268,8 +119,8 @@ export default function DashboardLayout({
               </div>
             </aside> */}
 
-            {/* Sidebar - Mobile */}
-            {/* {sidebarOpen && (
+              {/* Sidebar - Mobile */}
+              {/* {sidebarOpen && (
               <div className="md:hidden fixed inset-0 z-40">
                 <div
                   className="fixed inset-0 bg-black/50"
@@ -319,12 +170,12 @@ export default function DashboardLayout({
               </div>
             )} */}
 
-            {/* Main Content */}
-            <main className="flex-1 p-2 md:p-6">
-              {/* <CalendarWeekly /> */}
+              {/* Main Content */}
+              <main className="flex-1 p-2 md:p-6">
+                {/* <CalendarWeekly /> */}
 
-              {/* Welcome & Quick Actions */}
-              {/* <div className="mb-8">
+                {/* Welcome & Quick Actions */}
+                {/* <div className="mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold mb-2">
                 Selamat Pagi, John 👋
                 </h1>
@@ -350,8 +201,8 @@ export default function DashboardLayout({
                 </Link>
                 </div>
             </div> */}
-              {/* Skin Metrics Grid */}
-              {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {/* Skin Metrics Grid */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {skinMetrics.map((metric, idx) => (
                 <div
                     key={idx}
@@ -397,10 +248,10 @@ export default function DashboardLayout({
                 </div>
                 ))}
             </div> */}
-              {/* Two Column Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Activities */}
-                {/* <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
+                {/* Two Column Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Recent Activities */}
+                  {/* <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-lg font-semibold">Aktivitas Terbaru</h2>
                     <Link
@@ -443,8 +294,8 @@ export default function DashboardLayout({
                 </div>
                 </div> */}
 
-                {/* Skin Health Tips */}
-                {/* <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
+                  {/* Skin Health Tips */}
+                  {/* <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 rounded-lg bg-cyan-100 dark:bg-cyan-900/30">
                     <TrendingUp className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
@@ -475,12 +326,12 @@ export default function DashboardLayout({
                     </div>
                 </div>
                 </div> */}
-              </div>
-              {/* Skin Progress Chart Placeholder */}
-              <div className="max-w-7xl mx-auto mt-0 md:mt-8">
-                {children}
+                </div>
+                {/* Skin Progress Chart Placeholder */}
+                <div className="max-w-7xl mx-auto mt-0 md:mt-8">
+                  {children}
 
-                {/* <div className="flex items-center justify-between mb-6">
+                  {/* <div className="flex items-center justify-between mb-6">
                 <div>
                     <h2 className="text-lg font-semibold mb-1">Progress Kulit</h2>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -509,8 +360,8 @@ export default function DashboardLayout({
                 </div>
                 </div> */}
 
-                {/* Chart Placeholder */}
-                {/* <div className="h-64 flex items-center justify-center">
+                  {/* Chart Placeholder */}
+                  {/* <div className="h-64 flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-16 h-16 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mx-auto mb-4">
                     <BarChart3 className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
@@ -523,11 +374,12 @@ export default function DashboardLayout({
                     </p>
                 </div>
                 </div> */}
-              </div>
-            </main>
+                </div>
+              </main>
+            </div>
           </div>
-        </div>
-      </SkinProvider>
-    </DateProvider>
+        </SkinProvider>
+      </DateProvider>
+    </ProfileProvider>
   );
 }
