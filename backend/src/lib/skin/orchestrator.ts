@@ -1,7 +1,7 @@
 import { generateRecommendations } from "./recommendation.engine";
 import { getSeverity } from "./severity";
 import { introCopy, pickRandom } from "./intro.copy";
-import { SkinConcern } from "./types";
+import { SkinConcern } from "../../types/types";
 
 export function buildAnalysisResult({
   concerns,

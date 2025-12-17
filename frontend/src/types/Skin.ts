@@ -94,9 +94,11 @@ export interface AnalysisResult {
   photo_id: number; // bigint FK
   user_id: string; // uuid
   acne_score: number;
-  oilness_score: number;
+  oiliness_score: number;
   redness_score: number;
   moisture_score: number;
+  acne_locations: string[];
+  redness_locations: string[];
   generated_at: string; // timestamptz
 }
 
@@ -185,13 +187,15 @@ export type InsightReason =
 
 export type SkinMetric =
   | "acne_score"
-  | "oilness_score"
+  | "oiliness_score"
   | "redness_score"
   | "moisture_score";
 
+export type InsightStatus = "improved" | "worsened" | "stable";
+
 export interface SkinInsightItem {
   metric: SkinMetric;
-  status: "improved" | "worsened" | "stable";
+  status: InsightStatus;
   delta: number;
   causes: string[];
   recommendations: string[];

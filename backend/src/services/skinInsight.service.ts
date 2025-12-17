@@ -1,6 +1,6 @@
 import { SKIN_RULES, SkinMetric } from "../utils/skinRules";
 import { generateRecommendations } from "../utils/recommendations";
-import { AnalysisResult } from "../lib/skin/types";
+import { AnalysisResult } from "../types/types";
 import { SkinLog } from "../types/skinLog";
 import { SkinInsightItem } from "../types/skinInsight";
 
@@ -17,7 +17,7 @@ export function generateSkinInsights(
 ): SkinInsightItem[] {
   const metrics: SkinMetric[] = [
     "acne_score",
-    "oilness_score",
+    "oiliness_score",
     "redness_score",
     "moisture_score",
   ];

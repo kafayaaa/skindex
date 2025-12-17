@@ -1,6 +1,9 @@
 import { supabase } from "@/lib/supabase";
+import { SkinInsightResponse } from "@/types/Skin";
 
-export async function getSkinInsight() {
+export async function getSkinInsight(
+  date?: string
+): Promise<SkinInsightResponse> {
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -9,12 +12,18 @@ export async function getSkinInsight() {
     throw new Error("No active session");
   }
 
-  const res = await fetch("http://localhost:4000/api/skin-insight", {
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-      "Content-Type": "application/json",
-    },
-  });
+  const params = date ? `?date=${date}` : "";
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/skin-insight${params}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    }
+  );
 
   if (!res.ok) {
     const text = await res.text();

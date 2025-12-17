@@ -33,6 +33,7 @@ import { MdOutlineEditCalendar } from "react-icons/md";
 import { DateProvider } from "@/context/DateContext";
 import { SkinProvider } from "@/context/SkinContext";
 import LoadingScreen from "@/components/LoadingScreen";
+import ToggleTheme from "@/components/ToggleTheme";
 
 // Mock data untuk komponen
 const skinMetrics = [
@@ -178,7 +179,7 @@ export default function DashboardLayout({
                     <Bell className="w-5 h-5" />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button> */}
-
+                  <ToggleTheme />
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
                       <User className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
@@ -476,7 +477,7 @@ export default function DashboardLayout({
                 </div> */}
               </div>
               {/* Skin Progress Chart Placeholder */}
-              <div className="max-w-7xl mx-auto mt-0 md:mt-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-3 md:p-6">
+              <div className="max-w-7xl mx-auto mt-0 md:mt-8">
                 {children}
 
                 {/* <div className="flex items-center justify-between mb-6">

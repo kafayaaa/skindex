@@ -11,7 +11,7 @@ export interface SkinLog {
 
 export type SkinMetric =
   | "acne_score"
-  | "oilness_score"
+  | "oiliness_score"
   | "redness_score"
   | "moisture_score";
 
@@ -37,7 +37,7 @@ export const SKIN_RULES: Record<SkinMetric, SkinRule[]> = {
     },
   ],
 
-  oilness_score: [
+  oiliness_score: [
     {
       condition: (log) => log.stress_level >= 4,
       reason:

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { analyzeSkin } from "@/services/skin.service";
+import { useEffect, useState } from "react";
+import { analyzeSkin, getLogByDate } from "@/services/skin.service";
 import { useSkin } from "@/context/SkinContext";
 import { useDate } from "@/context/DateContext";
 import { useRouter } from "next/navigation";
@@ -19,6 +19,9 @@ export default function SkinUploadForm() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [todayLog, setTodayLog] = useState<any | null>(null);
+  const [checkingLog, setCheckingLog] = useState(true);
 
   const { logs, setAnalysis, loading, setLoading } = useSkin();
   const { selectedDayData } = useDate();
@@ -41,10 +44,33 @@ export default function SkinUploadForm() {
     }
   };
 
-  if (loading) return <LoadingScreen />;
-
   const selectedDate = selectedDayData?.date.toISOString().split("T")[0];
-  const todayLog = logs.find((log) => log.date === selectedDate);
+
+  useEffect(() => {
+    const fetchTodayLog = async () => {
+      if (!selectedDayData) return;
+
+      try {
+        setCheckingLog(true);
+        const dateString = selectedDayData.date.toISOString().split("T")[0];
+
+        const log = await getLogByDate(dateString);
+        setTodayLog(log);
+      } catch (err) {
+        setTodayLog(null);
+      } finally {
+        setCheckingLog(false);
+      }
+    };
+
+    fetchTodayLog();
+  }, [selectedDayData]);
+
+  if (checkingLog) {
+    return <LoadingScreen />;
+  }
+
+  if (loading) return <LoadingScreen />;
 
   if (!todayLog) {
     return (
@@ -73,7 +99,7 @@ export default function SkinUploadForm() {
   }
 
   const handleSubmit = async () => {
-    if (!file) return;
+    if (!file || !todayLog) return;
 
     setLoading(true);
     setError(null);

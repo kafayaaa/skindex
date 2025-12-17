@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import Link from "next/link";
+import ToggleTheme from "./ToggleTheme";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,15 +50,7 @@ export default function Header() {
           {/* Right Section */}
           <div className="flex items-center gap-4">
             {/* Theme Toggle - SOLUSI KUNCI */}
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800"
-              aria-label="Toggle theme"
-            >
-              <span className="sr-only">Toggle theme</span>
-              <Sun className="h-5 w-5 dark:hidden text-cyan-500" />
-              <Moon className="h-5 w-5 hidden dark:block text-cyan-500" />
-            </button>
+            <ToggleTheme />
 
             {/* Mobile Menu Button */}
             <button

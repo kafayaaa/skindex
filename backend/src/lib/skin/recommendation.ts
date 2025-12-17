@@ -1,4 +1,4 @@
-import { RecommendationCategory, SkinConcern } from "./types";
+import { RecommendationCategory, SkinConcern } from "../../types/types";
 
 function generateRecommendations(
   concerns: SkinConcern[],

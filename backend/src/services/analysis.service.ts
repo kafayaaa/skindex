@@ -1,5 +1,5 @@
 import { supabase } from "../utils/supabase";
-import { AnalysisResult } from "../lib/skin/types";
+import { AnalysisResult } from "../types/types";
 
 /**
  * Ambil analysis TERBARU milik user
@@ -48,6 +48,23 @@ export async function getPreviousAnalysis(
     }
     throw error;
   }
+
+  return data;
+}
+
+export async function getAnalysisByDate(userId: string, date: string) {
+  const start = `${date}T00:00:00Z`;
+  const end = `${date}T23:59:59Z`;
+
+  const { data } = await supabase
+    .from("analysis_results")
+    .select("*")
+    .eq("user_id", userId)
+    .gte("generated_at", start)
+    .lte("generated_at", end)
+    .order("generated_at", { ascending: false })
+    .limit(1)
+    .single();
 
   return data;
 }

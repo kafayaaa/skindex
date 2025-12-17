@@ -3,9 +3,11 @@ export interface AnalysisResult {
   photo_id: number; // bigint FK
   user_id: string; // uuid
   acne_score: number;
-  oilness_score: number;
+  oiliness_score: number;
   redness_score: number;
   moisture_score: number;
+  acne_locations: string[];
+  redness_locations: string[];
   generated_at: string; // timestamptz
 }
 
@@ -46,7 +48,7 @@ export interface SkinInsight {
   user_id: string;
   analysis_result_id: number;
 
-  metric: "acne" | "oilness" | "redness" | "moisture";
+  metric: "acne" | "oiliness" | "redness" | "moisture";
 
   change_type:
     | "significant_improvement"
