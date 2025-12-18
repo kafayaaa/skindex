@@ -125,7 +125,8 @@ export function InsightCard({ item }: { item: SkinInsightItem }) {
       {item.causes.length === 0 && item.recommendations.length === 0 && (
         <div className="text-center py-4">
           <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
-            Tidak ada penyebab atau saran yang teridentifikasi
+            Belum ada perubahan signifikan hari ini. Kulitmu masih dalam ritme
+            yang sama seperti kemarin.
           </p>
         </div>
       )}
