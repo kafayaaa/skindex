@@ -25,8 +25,8 @@ export function SkinInsightSection({ data }: Props) {
       return (
         <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-6">
           <InfoState
-            message="Insight akan tersedia setelah minimal 2 kali analisis untuk melihat pola perkembangan."
-            subtitle="Lakukan analisis lagi dalam 3-7 hari untuk mendapatkan insight yang lebih akurat."
+            message="Mau tahu rahasia perubahan kulitmu? Lakukan analisis minimal 2 hari berturut-turut"
+            subtitle="Semangat upload foto tiap hari yaaa... Ingat! Konsistensi setiap hari adalah kunci kulit sehat"
           />
         </div>
       );

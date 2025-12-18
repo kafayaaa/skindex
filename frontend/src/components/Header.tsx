@@ -66,7 +66,7 @@ export default function Header() {
             </button>
 
             {/* CTA Button */}
-            <div className="hidden md:block">
+            <div className="hidden md:block space-x-4">
               <Link
                 href="/signin"
                 className="w-full py-2 px-5 text-cyan-500 border border-cyan-500 hover:bg-cyan-500 hover:text-white font-medium rounded-lg transition-colors mt-2"

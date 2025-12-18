@@ -13,7 +13,13 @@ import {
   SkinLog,
   TriggerDetected,
 } from "@/types/Skin";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface SkinContextProps {
   logs: SkinLog[];
@@ -22,6 +28,9 @@ interface SkinContextProps {
   analysis: AnalysisResult[];
   setAnalysis: (analysis: AnalysisResult[]) => void;
 
+  refreshKey: number;
+  refreshAnalysis: () => void;
+
   analysisDetails: Record<number, AnalysisDetail>;
   fetchAnalysisDetail: (photoId: number) => Promise<void>;
 
@@ -29,7 +38,7 @@ interface SkinContextProps {
   setInterpretations: (interpretations: AnalysisInterpretation[]) => void;
 
   skinInsight: SkinInsightResponse;
-  fetchSkinInsight: (date?: string) => Promise<void>;
+  fetchSkinInsight: (date: string) => Promise<void>;
 
   triggers: TriggerDetected[];
   setTriggers: (triggers: TriggerDetected[]) => void;
@@ -52,6 +61,7 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
   const [analysisDetails, setAnalysisDetails] = useState<
     Record<number, AnalysisDetail>
   >({});
+  const [refreshKey, setRefreshKey] = useState<number>(0);
   const [interpretations, setInterpretations] = useState<
     AnalysisInterpretation[]
   >([]);
@@ -95,6 +105,10 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     fetchAnalysis();
   }, []);
 
+  const refreshAnalysis = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
+
   const fetchAnalysisDetail = async (photoId: number) => {
     // Jika sudah ada → jangan fetch ulang
     if (analysisDetails[photoId]) return;
@@ -112,19 +126,17 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const fetchSkinInsight = async (date?: string) => {
+  const fetchSkinInsight = useCallback(async (date: string): Promise<void> => {
     try {
-      setInsightLoading(true);
+      setLoading(true);
       const data = await getSkinInsight(date);
       setSkinInsight(data);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError("Gagal mengambil skin insight");
     } finally {
-      setInsightLoading(false);
+      setLoading(false);
     }
-  };
-
+  }, []);
   useEffect(() => {
     const fetchInterpretations = async () => {
       try {
@@ -137,10 +149,6 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     fetchInterpretations();
-  }, []);
-
-  useEffect(() => {
-    fetchSkinInsight();
   }, []);
 
   useEffect(() => {
@@ -166,6 +174,8 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
         setLogs,
         analysis,
         setAnalysis,
+        refreshKey,
+        refreshAnalysis,
         analysisDetails,
         fetchAnalysisDetail,
         interpretations,

@@ -7,21 +7,12 @@ import SkinProgressCard from "./SkinProgressCard";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { LuDroplets } from "react-icons/lu";
 import { GiHeatHaze, GiNightSleep } from "react-icons/gi";
-import {
-  TbDroplets,
-  TbLoader3,
-  TbMoodPuzzled,
-  TbPhotoCheck,
-  TbPhotoSearch,
-} from "react-icons/tb";
+import { TbDroplets, TbLoader3, TbMoodPuzzled } from "react-icons/tb";
 import { useSkin } from "@/context/SkinContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { generateRecommendations } from "@/utils/recommendationEngine";
 import { FaChartColumn, FaPlus } from "react-icons/fa6";
-import { SkinInsightSection } from "./SkinInsightSection";
-import { AnalysisResult, SkinInsightResponse } from "@/types/Skin";
-import LoadingScreen from "./LoadingScreen";
+import { AnalysisResult } from "@/types/Skin";
 import { getAnalysisByDate } from "@/lib/analysis";
 import { usePathname } from "next/navigation";
 import { FaSearch } from "react-icons/fa";
@@ -38,133 +29,90 @@ export default function LogDetail({
     null
   );
   const [loading, setLoading] = useState(true);
-  const { selectedDayData, selectedDay, getRatingColor } = useDate();
-  const {
-    logs,
-    analysis,
-    analysisDetails,
-    fetchAnalysisDetail,
-    fetchSkinInsight,
-    interpretations,
-    skinInsight,
-    error,
-  } = useSkin();
 
+  const { selectedDayData, selectedDay } = useDate();
+  const { logs, refreshKey, fetchSkinInsight, error } = useSkin();
   const pathname = usePathname();
 
   const formatDateToISO = (d: Date): string => {
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0"); // Bulan dimulai dari 0
+    const month = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
-  // Ambil string tanggal yang diformat dari prop 'date'
   const selectedDateString = formatDateToISO(date);
+  const selectedDateISO = formatDateToISO(selectedDay);
 
   const filteredLogs = logs.filter((log) => log.date === selectedDateString);
 
-  const getAnalysisForDate = (date: Date) => {
-    if (!Array.isArray(analysis)) return null;
-    const dateStr = formatDateToISO(date);
-
-    return analysis.find((a) => a.generated_at.startsWith(dateStr));
-  };
-  const selectedAnalysis = getAnalysisForDate(selectedDay);
-  const selectedDetail = selectedAnalysis
-    ? analysisDetails[selectedAnalysis.photo_id]
-    : null;
-
+  /* ================= FETCH ANALYSIS ================= */
   useEffect(() => {
-    if (selectedAnalysis) {
-      fetchAnalysisDetail(selectedAnalysis.photo_id);
-    }
-  }, [selectedAnalysis?.photo_id]);
+    let active = true;
 
-  const selectedDateISO = formatDateToISO(selectedDay);
-
-  const todayInterpretation = interpretations.find(
-    (i) => i.generated_at && i.generated_at?.startsWith(selectedDateISO)
-  );
-
-  useEffect(() => {
     const fetchAnalysis = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const data = await getAnalysisByDate(selectedDateString);
-        setLocalAnalysis(data[0] ?? null);
-      } catch (error) {
-        console.error("Failed to fetch analysis:", error);
-        setLocalAnalysis(null);
+        if (active) {
+          setLocalAnalysis(data?.[0] ?? null);
+        }
+      } catch (err) {
+        console.error("Failed to fetch analysis:", err);
+        if (active) setLocalAnalysis(null);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
     fetchAnalysis();
+    return () => {
+      active = false;
+    };
   }, [selectedDateString]);
 
+  /* ================= FETCH INSIGHT ================= */
   useEffect(() => {
+    if (!selectedDateISO) return;
     fetchSkinInsight(selectedDateISO);
-  }, [selectedDateISO]);
+  }, [selectedDateISO, refreshKey]);
 
-  const concerns = Array.from(new Set(todayInterpretation?.concerns));
-
-  const concernLabels: Record<string, string> = {
-    acne: "Jerawat",
-    redness: "Kemerahan",
-    oiliness: "Minyak Berlebih",
-    dry: "Kulit Kering",
-    sensitivity: "Kulit Sensitif",
-  };
-
-  if (loading)
+  /* ================= LOADING & ERROR ================= */
+  if (loading) {
     return (
-      <div className="w-full flex items-center justify-center">
+      <div className="w-full flex items-center justify-center py-10">
         <div className="flex items-center gap-2">
           <TbLoader3 className="text-3xl text-cyan-500 animate-spin" />
-          <p className="text-lg font-semibold">Memuat Data...</p>
+          <p className="text-lg font-semibold">Memuat data...</p>
         </div>
       </div>
     );
+  }
 
-  if (!analysis || analysis.length === 0)
-    return (
-      <div className="w-full flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          {/* <TbLoader3 className="text-3xl text-cyan-500 animate-spin" /> */}
-          <p className="text-lg font-semibold">
-            Analisis belum tersedia untuk tanggal ini
-          </p>
-        </div>
-      </div>
-    );
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
+  /* ================= RENDER UI ================= */
   return (
     <div className="bg-white dark:bg-zinc-900/50 rounded-xl px-3 py-5 md:p-5">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-        {/* Left Column - Day Info */}
+      <div className="flex flex-col md:flex-row gap-6">
         <div className="w-full">
+          {/* ===== HEADER DAY INFO ===== */}
           <div className="grid md:grid-cols-12 gap-4 mb-6">
-            <div className="col-span-6 flex justify-center md:justify-start items-center gap-2 md:gap-3 md:mb-4">
+            <div className="col-span-6 flex items-center gap-3">
               <div
-                className={`
-                w-9 md:w-12 h-9 md:h-12 rounded-xl flex items-center justify-center text-lg font-bold
-                ${
+                className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold ${
                   selectedDayData?.isToday
                     ? "bg-cyan-500 text-white"
-                    : "bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
-                }
-              `}
+                    : "bg-white dark:bg-zinc-800 border"
+                }`}
               >
                 {selectedDayData?.dateNumber}
               </div>
               <div>
-                <h3 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                  {selectedDayData?.dayName}
-                </h3>
-                <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
+                <h3 className="font-semibold">{selectedDayData?.dayName}</h3>
+                <p className="text-sm text-zinc-500">
                   {selectedDayData?.date.toLocaleDateString("id-ID", {
                     year: "numeric",
                     month: "long",
@@ -173,101 +121,32 @@ export default function LogDetail({
               </div>
             </div>
 
-            <div className="col-span-6 grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="p-3 rounded-lg bg-zinc-100/70 dark:bg-zinc-800">
-                <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-1">
-                  Log Harian
-                </p>
-                <div className="flex items-center gap-2 text-sm md:text-base">
-                  {filteredLogs.length > 0 ? (
-                    <>
-                      <CheckCircle className="w-4 md:w-5 h-4 md:h-5 text-green-500" />
-                      <span className="text-sm md:text-base font-medium text-green-600 dark:text-green-400">
-                        Tercatat
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <XCircle className="w-4 md:w-5 h-4 md:h-5 text-red-500" />
-                      <span className="text-sm md:text-base font-medium text-red-600 dark:text-red-400">
-                        Belum
-                      </span>
-                    </>
-                  )}
-                </div>
+            {/* ===== STATUS BOX ===== */}
+            <div className="col-span-6 flex justify-end gap-4">
+              {/* LOG */}
+              <div className="w-1/3">
+                <StatusBox title="Log Harian" done={filteredLogs.length > 0} />
               </div>
 
-              <div className="p-3 rounded-lg bg-zinc-100/70 dark:bg-zinc-800">
-                <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-1">
-                  Analisis Foto
-                </p>
-                <div className="flex items-center gap-2">
-                  {localAnalysis ? (
-                    <>
-                      <Camera className="w-4 md:w-5 h-4 md:h-5 text-blue-500" />
-                      <span className="text-sm md:text-base font-medium text-blue-600 dark:text-blue-400">
-                        Selesai
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Camera className="w-4 md:w-5 h-4 md:h-5 text-zinc-400" />
-                      <span className="text-sm md:text-base font-medium text-zinc-500 dark:text-zinc-400">
-                        Belum
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="hidden md:block space-y-3 my-auto">
-                {filteredLogs.length > 0 ? (
-                  <button
-                    className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed`}
-                    disabled={true}
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Log harian terisi</span>
-                  </button>
-                ) : (
+              {/* ACTION */}
+              {filteredLogs.length === 0 && (
+                <div className="hidden md:block my-auto">
                   <Link
                     href="/dashboard/daily-log"
-                    className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-cyan-600 hover:bg-cyan-700 text-white`}
+                    className="w-full flex justify-center items-center gap-2 px-4 py-3 rounded-lg bg-cyan-600 text-white"
                   >
-                    <FaPlus className="w-4 h-4" />
-                    <span>Log Harian</span>
+                    <FaPlus />
+                    Log Harian
                   </Link>
-                )}
-
-                {/* {localAnalysis.length > 0 ? (
-                  <button
-                    className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
-                    disabled={true}
-                  >
-                    <TbPhotoCheck className="w-4 h-4" />
-                    <span>Analisis selesai</span>
-                  </button>
-                ) : (
-                  <Link
-                    href="/dashboard/analysis"
-                    className="text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 border border-cyan-600 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
-                  >
-                    <TbPhotoSearch className="w-4 h-4" />
-                    <span>Analisis</span>
-                  </Link>
-                )} */}
-              </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Day Status */}
+          {/* ===== ANALYSIS & LOG DATA ===== */}
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
             {localAnalysis ? (
-              <div
-                key={localAnalysis.id}
-                className="col-span-2 md:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-4"
-              >
+              <div className="col-span-2 md:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <SkinProgressCard
                   icon={
                     <IoIosCloseCircleOutline className="text-7xl text-pink-500" />
@@ -304,6 +183,7 @@ export default function LogDetail({
                 />
               </div>
             ) : null}
+
             {filteredLogs.map((log) => (
               <div key={log.id} className="col-span-2 grid grid-cols-2 gap-4">
                 <SkinProgressCard
@@ -326,7 +206,7 @@ export default function LogDetail({
             ))}
           </div>
 
-          {/* Notes */}
+          {/* ===== DAILY LOG ===== */}
           <DailyLog date={selectedDayData?.date ?? selectedDay} />
           {localAnalysis && filteredLogs.length > 0 && (
             <div className="relative w-full h-28">
@@ -369,93 +249,39 @@ export default function LogDetail({
               </div>
             </div>
           )}
+
           {children}
-          {/* Interpretation */}
-
-          {/* Skin Analysis Insight */}
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Right Column - Quick Actions & Skin Rating */}
-        <div className="block md:hidden md:w-64 space-y-6">
-          {/* Skin Rating */}
-          {/* <div className="p-4 rounded-lg bg-white dark:bg-zinc-800">
-            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
-              Rating Kulit
-            </p>
-            {selectedDayData?.skinRating ? (
-              <div className="flex items-center gap-4">
-                <div
-                  className={`
-                    w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold text-white
-                    ${getRatingColor(selectedDayData.skinRating)}
-                  `}
-                >
-                  {selectedDayData.skinRating}
-                </div>
-                <div>
-                  <p className="font-semibold">
-                    {selectedDayData.skinRating <= 2
-                      ? "Perlu Perhatian"
-                      : selectedDayData.skinRating <= 3
-                      ? "Cukup Baik"
-                      : "Sangat Baik"}
-                  </p>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    Skala 1-5
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-zinc-500 dark:text-zinc-400 mb-3">
-                  Belum ada rating
-                </p>
-                <button className="text-sm text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300">
-                  Beri rating
-                </button>
-              </div>
-            )}
-          </div> */}
-
-          {/* Quick Actions */}
-          <div className="space-y-3">
-            {filteredLogs.length > 0 ? (
-              <button
-                className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed`}
-                disabled={true}
-              >
-                <CheckCircle className="w-4 h-4" />
-                <span>Log harian terisi</span>
-              </button>
-            ) : (
-              <Link
-                href="/dashboard/daily-log"
-                className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-cyan-600 hover:bg-cyan-700 text-white`}
-              >
-                <FaPlus className="w-4 h-4" />
-                <span>Tambah Log Harian</span>
-              </Link>
-            )}
-
-            {/* {localAnalysis.length > 0 ? (
-              <button
-                className={`text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors bg-zinc-300 text-zinc-500 cursor-not-allowed`}
-                disabled={true}
-              >
-                <TbPhotoCheck className="w-4 h-4" />
-                <span>Analisis foto selesai</span>
-              </button>
-            ) : (
-              <Link
-                href="/dashboard/analysis"
-                className="text-sm md:text-base w-full flex items-center justify-center gap-2 px-4 py-3 border border-cyan-600 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
-              >
-                <TbPhotoSearch className="w-4 h-4" />
-                <span>Analisis Foto</span>
-              </Link>
-            )} */}
-          </div>
-        </div>
+/* ===== SMALL HELPER ===== */
+function StatusBox({
+  title,
+  done,
+  icon,
+}: {
+  title: string;
+  done: boolean;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <div className="p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+      <p className="text-sm text-zinc-500 mb-1">{title}</p>
+      <div className="flex items-center gap-2">
+        {done ? (
+          <>
+            <CheckCircle className="text-green-500" />
+            <span className="text-green-600">Tercatat</span>
+          </>
+        ) : (
+          <>
+            {icon ?? <XCircle className="text-red-500" />}
+            <span className="text-zinc-500">Belum</span>
+          </>
+        )}
       </div>
     </div>
   );
