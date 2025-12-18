@@ -8,6 +8,7 @@ import healthRoute from "./routes/health.route";
 import skinCheckRoute from "./routes/skin-check.route";
 import skinRouter from "./routes/skin.route";
 import skinInsightRoutes from "./routes/skinInsight.route";
+import skinLogRoutes from "./routes/skin-log.route";
 
 const app = express();
 app.use(
@@ -26,6 +27,7 @@ app.use("/health", healthRoute);
 app.use("/api/skin-check", skinCheckRoute);
 app.use("/api/skin", skinRouter);
 app.use("/api/skin-insight", skinInsightRoutes);
+app.use("/api/skin-log", skinLogRoutes);
 
 // Example endpoint using multer
 app.post("/upload", upload.single("image"), (req, res) => {

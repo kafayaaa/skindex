@@ -2,6 +2,7 @@ import { useDate } from "@/context/DateContext";
 import { useSkin } from "@/context/SkinContext";
 import { generateRecommendations } from "@/utils/recommendationEngine";
 import { FaSearch } from "react-icons/fa";
+import DietAnalyzeSection from "./DietAnalyzeSection";
 
 export default function InterpretationSection() {
   const { interpretations } = useSkin();
@@ -89,6 +90,8 @@ export default function InterpretationSection() {
             </div>
           </div>
 
+          {/* Diet Analyze Section */}
+          <DietAnalyzeSection />
           {/* Recommendations Section */}
           <div className="">
             <h4 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
@@ -144,7 +147,7 @@ export default function InterpretationSection() {
                     {rec.descriptions.map((desc, i) => (
                       <li
                         key={i}
-                        className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 flex items-start gap-2"
+                        className="text-sm text-zinc-800 dark:text-zinc-200 flex items-start gap-2"
                       >
                         <span className="mt-1.5 w-1 h-1 rounded-full bg-zinc-400 shrink-0" />
                         {desc}

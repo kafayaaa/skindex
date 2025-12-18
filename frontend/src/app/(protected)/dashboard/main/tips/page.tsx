@@ -50,9 +50,7 @@ export default function TipsPage() {
                 {idx + 1}
               </span>
             </div>
-            <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300">
-              {rec}
-            </p>
+            <p className="text-sm text-zinc-700 dark:text-zinc-300">{rec}</p>
           </div>
         ))}
       </div>

@@ -65,6 +65,7 @@ export default function LogDetail({
   const filteredLogs = logs.filter((log) => log.date === selectedDateString);
 
   const getAnalysisForDate = (date: Date) => {
+    if (!Array.isArray(analysis)) return null;
     const dateStr = formatDateToISO(date);
 
     return analysis.find((a) => a.generated_at.startsWith(dateStr));
@@ -123,6 +124,18 @@ export default function LogDetail({
         <div className="flex items-center gap-2">
           <TbLoader3 className="text-3xl text-cyan-500 animate-spin" />
           <p className="text-lg font-semibold">Memuat Data...</p>
+        </div>
+      </div>
+    );
+
+  if (!analysis || analysis.length === 0)
+    return (
+      <div className="w-full flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          {/* <TbLoader3 className="text-3xl text-cyan-500 animate-spin" /> */}
+          <p className="text-lg font-semibold">
+            Analisis belum tersedia untuk tanggal ini
+          </p>
         </div>
       </div>
     );

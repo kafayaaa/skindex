@@ -4,12 +4,14 @@ import { getInterpretations } from "@/services/interpretation.service";
 import { getAnalyzeSkin } from "@/services/skin.service";
 import { getSkinInsight } from "@/services/skinInsight.service";
 import { getSkinLogs } from "@/services/skinLog.service";
+import { getTriggers } from "@/services/trigger.service";
 import {
   AnalysisDetail,
   AnalysisInterpretation,
   AnalysisResult,
   SkinInsightResponse,
   SkinLog,
+  TriggerDetected,
 } from "@/types/Skin";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -28,6 +30,9 @@ interface SkinContextProps {
 
   skinInsight: SkinInsightResponse;
   fetchSkinInsight: (date?: string) => Promise<void>;
+
+  triggers: TriggerDetected[];
+  setTriggers: (triggers: TriggerDetected[]) => void;
 
   loading: boolean;
   setLoading: (loading: boolean) => void;
@@ -52,6 +57,7 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
   >([]);
   const [skinInsight, setSkinInsight] =
     useState<SkinInsightResponse>(EMPTY_SKIN_INSIGHT);
+  const [triggers, setTriggers] = useState<TriggerDetected[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [insightLoading, setInsightLoading] = useState(false);
@@ -137,6 +143,22 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
     fetchSkinInsight();
   }, []);
 
+  useEffect(() => {
+    const fetchTriggers = async () => {
+      try {
+        const data = await getTriggers();
+        setTriggers(data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTriggers();
+  }, []);
+
   return (
     <SkinContext.Provider
       value={{
@@ -150,6 +172,8 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
         setInterpretations,
         skinInsight,
         fetchSkinInsight,
+        triggers,
+        setTriggers,
         loading,
         setLoading,
         insightLoading,
