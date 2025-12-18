@@ -18,7 +18,7 @@ export function InsightCard({ item }: { item: SkinInsightItem }) {
       color: "bg-red-50 dark:bg-red-900/5 border-red-200 dark:border-red-900",
       textColor: "text-red-700 dark:text-red-400",
       icon: <TiWarningOutline className="w-5 h-5" />,
-      label: "Lagi Sensitif",
+      label: "Butuh Perhatian",
       badgeColor:
         "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
     },

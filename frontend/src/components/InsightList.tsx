@@ -17,7 +17,7 @@ export function InsightList({ insights }: Props) {
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
+      {/* <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
         <div className="relative p-3 md:p-4 flex justify-center items-center gap-2 md:gap-3 rounded-xl bg-green-50 dark:bg-green-900/30 overflow-clip">
           <HiOutlineSparkles className="absolute top-0 -left-4 text-6xl text-green-500/10" />
           <p className="text-2xl font-extrabold text-green-600 dark:text-green-400">
@@ -39,7 +39,7 @@ export function InsightList({ insights }: Props) {
           </p>
           <p className="text-xs md:text-sm font-semibold">Terjaga</p>
         </div>
-      </div>
+      </div> */}
 
       {/* Insights List */}
       <div className="space-y-4">

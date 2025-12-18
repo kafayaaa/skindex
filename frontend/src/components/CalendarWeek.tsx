@@ -41,7 +41,7 @@ export default function CalendarWeekly({
   return (
     <>
       {/* Header */}
-      <div className="flex sm:items-center justify-between gap-4 mb-6">
+      <div className="w-full flex sm:items-center justify-between gap-4 mb-6">
         <div className="w-full flex items-center gap-3">
           <CalendarIcon className="size-10 text-cyan-600 dark:text-cyan-400 hidden md:block" />
           <div>

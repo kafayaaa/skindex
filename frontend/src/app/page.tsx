@@ -309,10 +309,13 @@ export default function Home() {
               Bergabung dengan ribuan pengguna yang telah menemukan solusi
               perawatan kulit yang tepat
             </p>
-            <button className="px-8 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2">
+            <Link
+              href="/signup"
+              className="px-8 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+            >
               Daftar Gratis Sekarang
               <ArrowRight className="w-5 h-5" />
-            </button>
+            </Link>
           </div>
         </div>
       </section>

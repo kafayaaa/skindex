@@ -1,6 +1,7 @@
 import { useDate } from "@/context/DateContext";
 import { useSkin } from "@/context/SkinContext";
 import { generateRecommendations } from "@/utils/recommendationEngine";
+import { FaSearch } from "react-icons/fa";
 
 export default function InterpretationSection() {
   const { interpretations } = useSkin();
@@ -15,6 +16,7 @@ export default function InterpretationSection() {
   const todayInterpretation = interpretations.find(
     (i) => i.generated_at && i.generated_at?.startsWith(selectedDateISO)
   );
+  console.log(todayInterpretation?.recommendations);
   const concerns = Array.from(new Set(todayInterpretation?.concerns));
 
   const concernLabels: Record<string, string> = {
@@ -27,29 +29,15 @@ export default function InterpretationSection() {
   return (
     <div className="w-full">
       {todayInterpretation && (
-        <div className="my-6 bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-3 md:p-6">
+        <div className="mb-6 bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-3 md:p-6">
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm">
-              <svg
-                className="w-5 h-5 text-cyan-600 dark:text-cyan-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
+            <FaSearch className="text-xl md:text-3xl text-cyan-500" />
             <div>
-              <h3 className="font-bold text-base md:text-lg text-zinc-900 dark:text-zinc-100">
+              <h2 className="text-base md:text-xl font-bold text-zinc-900 dark:text-zinc-100">
                 Kondisi Kulitmu Hari Ini
-              </h3>
-              <p className="text-xs md:text-sm text-cyan-600 dark:text-cyan-400">
+              </h2>
+              <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
                 Berdasarkan analisis terbaru
               </p>
             </div>
@@ -102,7 +90,7 @@ export default function InterpretationSection() {
           </div>
 
           {/* Recommendations Section */}
-          <div className="mb-6">
+          <div className="">
             <h4 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
               <svg
                 className="w-4 h-4 text-cyan-600 dark:text-cyan-400"
@@ -152,54 +140,23 @@ export default function InterpretationSection() {
                         : "Prioritas Rendah"}
                     </span>
                   </div>
-                  <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400">
-                    {rec.description}
-                  </p>
+                  <ul className="space-y-2">
+                    {rec.descriptions.map((desc, i) => (
+                      <li
+                        key={i}
+                        className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 flex items-start gap-2"
+                      >
+                        <span className="mt-1.5 w-1 h-1 rounded-full bg-zinc-400 shrink-0" />
+                        {desc}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quick Tips */}
-          <div>
-            <h4 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
-              <svg
-                className="w-4 h-4 text-cyan-600 dark:text-cyan-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-              Tips Cepat Harian
-            </h4>
-
-            <div className="space-y-3">
-              {generateRecommendations(
-                todayInterpretation.severity,
-                todayInterpretation.concerns
-              ).map((rec, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 hover:bg-white dark:hover:bg-zinc-800 transition-colors"
-                >
-                  <div className="shrink-0 w-6 h-6 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mt-0.5">
-                    <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400">
-                      {idx + 1}
-                    </span>
-                  </div>
-                  <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300">
-                    {rec}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Footer */}
           {/* <div className="mt-6 pt-6 border-t border-cyan-200 dark:border-cyan-800">

@@ -35,7 +35,7 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          {/* <nav className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <Link
                 key={item.label}
@@ -45,7 +45,7 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-          </nav>
+          </nav> */}
 
           {/* Right Section */}
           <div className="flex items-center gap-4">
@@ -66,18 +66,20 @@ export default function Header() {
             </button>
 
             {/* CTA Button */}
-            <Link
-              href="/signin"
-              className="w-full py-2 px-5 text-cyan-500 border border-cyan-500 hover:bg-cyan-500 hover:text-white font-medium rounded-lg transition-colors mt-2"
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/signup"
-              className="w-full py-2 px-5 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors mt-2"
-            >
-              Daftar
-            </Link>
+            <div className="hidden md:block">
+              <Link
+                href="/signin"
+                className="w-full py-2 px-5 text-cyan-500 border border-cyan-500 hover:bg-cyan-500 hover:text-white font-medium rounded-lg transition-colors mt-2"
+              >
+                Masuk
+              </Link>
+              <Link
+                href="/signup"
+                className="w-full py-2 px-5 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors mt-2"
+              >
+                Daftar
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -85,7 +87,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden pb-4">
             <div className="flex flex-col gap-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-              {navItems.map((item) => (
+              {/* {navItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
@@ -94,7 +96,7 @@ export default function Header() {
                 >
                   {item.label}
                 </a>
-              ))}
+              ))} */}
               <Link
                 href="/signin"
                 className="w-full py-2 px-5 text-cyan-500 border border-cyan-500 hover:bg-cyan-500 hover:text-white font-medium rounded-lg transition-colors mt-2"
