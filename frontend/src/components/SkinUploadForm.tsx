@@ -12,8 +12,8 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
-import { BiLoader } from "react-icons/bi";
 import LoadingScreen from "./LoadingScreen";
+import Image from "next/image";
 
 export default function SkinUploadForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -23,7 +23,7 @@ export default function SkinUploadForm() {
   const [todayLog, setTodayLog] = useState<any | null>(null);
   const [checkingLog, setCheckingLog] = useState(true);
 
-  const { logs, setAnalysis, loading, setLoading } = useSkin();
+  const { refreshAnalysis, loading, setLoading } = useSkin();
   const { selectedDayData } = useDate();
   const router = useRouter();
 
@@ -44,8 +44,6 @@ export default function SkinUploadForm() {
     }
   };
 
-  const selectedDate = selectedDayData?.date.toISOString().split("T")[0];
-
   useEffect(() => {
     const fetchTodayLog = async () => {
       if (!selectedDayData) return;
@@ -57,6 +55,7 @@ export default function SkinUploadForm() {
         const log = await getLogByDate(dateString);
         setTodayLog(log);
       } catch (err) {
+        console.error(err);
         setTodayLog(null);
       } finally {
         setCheckingLog(false);
@@ -107,7 +106,8 @@ export default function SkinUploadForm() {
     try {
       const data = await analyzeSkin(file, todayLog.id);
       console.log("ANALYSIS RESULT:", data);
-      setAnalysis(data.result);
+      refreshAnalysis();
+      // setAnalysis(data.result);
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
@@ -175,7 +175,9 @@ export default function SkinUploadForm() {
           {preview ? (
             <div className="space-y-4">
               <div className="relative mx-auto w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-zinc-800 shadow-lg">
-                <img
+                <Image
+                  height={35}
+                  width={35}
                   src={preview}
                   alt="Preview foto kulit"
                   className="w-full h-full object-cover"

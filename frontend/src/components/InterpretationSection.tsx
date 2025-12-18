@@ -1,6 +1,5 @@
 import { useDate } from "@/context/DateContext";
 import { useSkin } from "@/context/SkinContext";
-import { generateRecommendations } from "@/utils/recommendationEngine";
 import { FaSearch } from "react-icons/fa";
 import DietAnalyzeSection from "./DietAnalyzeSection";
 
@@ -158,21 +157,6 @@ export default function InterpretationSection() {
               ))}
             </div>
           </div>
-
-          {/* Quick Tips */}
-
-          {/* Footer */}
-          {/* <div className="mt-6 pt-6 border-t border-cyan-200 dark:border-cyan-800">
-                            <div className="flex items-center justify-between text-sm">
-                              <div className="text-zinc-500 dark:text-zinc-400">
-                                Terakhir diperbarui:{" "}
-                                {new Date().toLocaleDateString("id-ID")}
-                              </div>
-                              <button className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 text-sm font-medium">
-                                Simpan Rekomendasi
-                              </button>
-                            </div>
-                          </div> */}
         </div>
       )}
     </div>

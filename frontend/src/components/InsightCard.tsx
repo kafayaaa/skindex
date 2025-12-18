@@ -1,5 +1,4 @@
 import { SkinInsightItem } from "@/types/Skin";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { HiOutlineMinusCircle, HiOutlineSparkles } from "react-icons/hi2";
 import { TiWarningOutline } from "react-icons/ti";
 
@@ -67,7 +66,7 @@ export function InsightCard({ item }: { item: SkinInsightItem }) {
                 <span
                   className={`text-xs px-2 py-1 rounded-full ${config.badgeColor}`}
                 >
-                  {item.status === "improved" ? "−" : "+"}
+                  {/* {item.status === "improved" ? "−" : "+"} */}
                   {item.delta}
                 </span>
               )}
