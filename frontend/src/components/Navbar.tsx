@@ -2,25 +2,12 @@
 
 import Link from "next/link";
 import ToggleTheme from "./ToggleTheme";
-import { LogOut, User } from "lucide-react";
+import { User } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
-import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function Navbar() {
   const { profile } = useProfile();
-  const router = useRouter();
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    router.push("/signin");
-  };
   return (
     <header className="sticky top-0 z-40 bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-700">
       <div className="max-w-7xl mx-auto px-4">
@@ -73,7 +60,7 @@ export default function Navbar() {
                       height={32}
                       src={profile.photo}
                       alt="Profile"
-                      className="w-8 h-8 rounded-full"
+                      className="w-8 h-8 rounded-full object-cover"
                     />
                   </div>
                 ) : (

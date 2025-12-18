@@ -18,12 +18,14 @@ import { useSkin } from "@/context/SkinContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateRecommendations } from "@/utils/recommendationEngine";
-import { FaPlus } from "react-icons/fa6";
+import { FaChartColumn, FaPlus } from "react-icons/fa6";
 import { SkinInsightSection } from "./SkinInsightSection";
 import { AnalysisResult, SkinInsightResponse } from "@/types/Skin";
 import LoadingScreen from "./LoadingScreen";
 import { getAnalysisByDate } from "@/lib/analysis";
 import { usePathname } from "next/navigation";
+import { FaSearch } from "react-icons/fa";
+import { MdOutlineTipsAndUpdates } from "react-icons/md";
 
 export default function LogDetail({
   date,
@@ -313,43 +315,47 @@ export default function LogDetail({
 
           {/* Notes */}
           <DailyLog date={selectedDayData?.date ?? selectedDay} />
+          {localAnalysis && filteredLogs.length > 0 && (
+            <div className="relative w-full h-28">
+              <div className="absolute top-0 left-0 w-full my-10 flex md:grid md:grid-cols-3 items-end border-b border-zinc-200 dark:border-zinc-700 overflow-scroll md:overflow-hidden">
+                <Link
+                  href="/dashboard/main/interpretation"
+                  className={`min-w-fit text-nowrap flex justify-center items-center gap-2 font-bold py-3 px-4 transition-all duration-200 ease-out ${
+                    pathname === "/dashboard/main/interpretation"
+                      ? "text-cyan-500 border-b-4 border-cyan-500"
+                      : "hover:border-b-4 hover:border-cyan-500"
+                  }`}
+                >
+                  <FaSearch />
+                  Analisis Hari ini
+                </Link>
 
-          <div className="w-full my-10 grid grid-cols-2 items-end border-b border-zinc-200 dark:border-zinc-700">
-            <div
-              className={`w-full flex items-center justify-center py-3 ${
-                pathname === "/dashboard/main/interpretation"
-                  ? "border-b-4 border-cyan-500"
-                  : ""
-              }`}
-            >
-              <Link
-                href="/dashboard/main/interpretation"
-                className={`font-bold ${
-                  pathname === "/dashboard/main/interpretation"
-                    ? "text-cyan-500"
-                    : ""
-                }`}
-              >
-                Analisis Hari ini
-              </Link>
+                <Link
+                  href="/dashboard/main/insight"
+                  className={`min-w-fit text-nowrap flex justify-center items-center gap-2 font-bold py-3 px-4 transition-all duration-200 ease-out ${
+                    pathname === "/dashboard/main/insight"
+                      ? "text-cyan-500 border-b-4 border-cyan-500"
+                      : "hover:border-b-4 hover:border-cyan-500"
+                  }`}
+                >
+                  <FaChartColumn />
+                  Progres Kulit
+                </Link>
+
+                <Link
+                  href="/dashboard/main/tips"
+                  className={`min-w-fit text-nowrap flex justify-center items-center gap-2 font-bold py-3 px-4 transition-all duration-200 ease-out ${
+                    pathname === "/dashboard/main/tips"
+                      ? "text-cyan-500 border-b-4 border-cyan-500"
+                      : "hover:border-b-4 hover:border-cyan-500"
+                  }`}
+                >
+                  <MdOutlineTipsAndUpdates />
+                  Tips
+                </Link>
+              </div>
             </div>
-            <div
-              className={`w-full flex items-center justify-center py-3 ${
-                pathname === "/dashboard/main/insight"
-                  ? "border-b-4 border-cyan-500"
-                  : ""
-              }`}
-            >
-              <Link
-                href="/dashboard/main/insight"
-                className={`font-bold ${
-                  pathname === "/dashboard/main/insight" ? "text-cyan-500" : ""
-                }`}
-              >
-                Progres Kulit
-              </Link>
-            </div>
-          </div>
+          )}
           {children}
           {/* Interpretation */}
 

@@ -2,7 +2,7 @@ import { SkinInsightResponse } from "@/types/Skin";
 import { InsightList } from "./InsightList";
 import { CTAState, EmptyState, InfoState } from "./CTA";
 import { RiSparkling2Line } from "react-icons/ri";
-import { FaRegLightbulb } from "react-icons/fa6";
+import { FaChartColumn, FaRegLightbulb } from "react-icons/fa6";
 
 interface Props {
   data: SkinInsightResponse;
@@ -33,7 +33,7 @@ export function SkinInsightSection({ data }: Props) {
 
     case "missing_skin_log":
       return (
-        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-2xl border border-cyan-200 dark:border-cyan-800 p-6">
+        <div className="bg-linear-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-2xl border border-cyan-200 dark:border-cyan-800 p-6">
           <CTAState
             message="Isi Skin Log hari ini untuk mengetahui penyebab perubahan kondisi kulit."
             actionLabel="Isi Log Harian"
@@ -47,7 +47,7 @@ export function SkinInsightSection({ data }: Props) {
       return (
         <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-3 md:p-6">
           <div className="flex items-center gap-3 mb-6">
-            <FaRegLightbulb className="text-xl md:text-3xl text-cyan-500" />
+            <FaChartColumn className="text-xl md:text-3xl text-cyan-500" />
             <div>
               <h2 className="text-base md:text-xl font-bold text-zinc-900 dark:text-zinc-100">
                 Kabar Kulitmu

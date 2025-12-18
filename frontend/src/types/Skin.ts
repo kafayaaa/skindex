@@ -129,7 +129,7 @@ export interface AnalysisInterpretation {
     category: string;
     priority: 1 | 2 | 3;
     severity: "low" | "medium" | "high";
-    description: string;
+    descriptions: string[];
   }[];
   generated_at: string;
 }
