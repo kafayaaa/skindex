@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import ToggleTheme from "./ToggleTheme";
+import Image from "next/image";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,10 +26,17 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             {/* <div className="w-8 h-8 rounded-lg bg-cyan-600 flex items-center justify-center">
               <span className="text-white font-bold">S</span>
             </div> */}
+            <Image
+              width={75}
+              height={75}
+              src="/logo.webp"
+              alt="Logo"
+              className="w-15 h-15"
+            />
             <span className="text-xl font-black text-zinc-900 dark:text-zinc-100">
               Skindex
             </span>

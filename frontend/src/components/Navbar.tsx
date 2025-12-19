@@ -25,10 +25,17 @@ export default function Navbar() {
                     )}
                   </button> */}
 
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/dashboard" className="flex items-center">
               {/* <div className="w-8 h-8 rounded-lg bg-cyan-600 flex items-center justify-center">
                     <span className="text-white font-bold">S</span>
                     </div> */}
+              <Image
+                width={75}
+                height={75}
+                src="/logo.webp"
+                alt="Logo"
+                className="w-15 h-15"
+              />
               <span className="text-xl font-bold">Skindex</span>
             </Link>
           </div>
