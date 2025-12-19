@@ -32,6 +32,10 @@ export default function CalendarWeekly({
     return `${year}-${month}-${day}`;
   };
 
+  const selectedDateString = formatDateToISO(selectedDay);
+
+  const filteredLogs = logs.filter((log) => log.date === selectedDateString);
+
   return (
     <>
       {/* Header */}
@@ -161,12 +165,21 @@ export default function CalendarWeekly({
       {/* Selected Day Details */}
       {children}
       {/* Week Navigation Tips */}
-      <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700 text-center">
+      {filteredLogs.length > 0 && (
+        <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700 text-center">
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
+            Hasil ini dianalisis oleh AI. Untuk diagnosa yang lebih mendalam dan
+            akurat, sangat disarankan untuk berkonsultasi dengan dokter kulit
+            yaaa...
+          </p>
+        </div>
+      )}
+      {/* <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700 text-center">
         <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
           Gunakan tombol panah untuk navigasi minggu • Klik &quot;Minggu
           Ini&quot; untuk kembali ke minggu saat ini
         </p>
-      </div>
+      </div> */}
     </>
   );
 }

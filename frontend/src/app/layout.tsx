@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: "Skindex - Your Skin Health Companion",
   description:
     "Website analisis kondisi wajah dengan journaling progress harian serta melacak penyebab pemicu breakout",
+  icons: {
+    icon: "/logo.ico",
+  },
 };
 
 export default function RootLayout({
