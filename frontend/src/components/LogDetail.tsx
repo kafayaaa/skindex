@@ -99,8 +99,8 @@ export default function LogDetail({
       <div className="flex flex-col md:flex-row gap-6">
         <div className="w-full">
           {/* ===== HEADER DAY INFO ===== */}
-          <div className="grid md:grid-cols-12 gap-4 mb-6">
-            <div className="col-span-6 flex items-center gap-3">
+          <div className="grid grid-cols-12 gap-4 mb-6">
+            <div className="col-span-7 flex items-center gap-3">
               <div
                 className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold ${
                   selectedDayData?.isToday
@@ -122,21 +122,21 @@ export default function LogDetail({
             </div>
 
             {/* ===== STATUS BOX ===== */}
-            <div className="col-span-6 flex justify-end gap-4">
+            <div className="col-span-5 flex justify-end gap-4">
               {/* LOG */}
-              <div className="w-1/3">
+              {/* <div className="w-1/3">
                 <StatusBox title="Log Harian" done={filteredLogs.length > 0} />
-              </div>
+              </div> */}
 
               {/* ACTION */}
               {filteredLogs.length === 0 && (
-                <div className="hidden md:block my-auto">
+                <div className="my-auto">
                   <Link
                     href="/dashboard/daily-log"
-                    className="w-full flex justify-center items-center gap-2 px-4 py-3 rounded-lg bg-cyan-600 text-white"
+                    className="w-full flex justify-center items-center gap-2 px-4 py-1.5 md:py-3 rounded-lg bg-cyan-600 text-white"
                   >
                     <FaPlus />
-                    Log Harian
+                    Log
                   </Link>
                 </div>
               )}

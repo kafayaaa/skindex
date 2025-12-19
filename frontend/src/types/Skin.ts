@@ -56,7 +56,7 @@ export interface SkinLog {
 export interface Photo {
   id: number; // bigserial
   user_id: string; // uuid
-  log_id?: number | null; // FK optional
+  log_id: string | null; // FK optional
   url: string; // Supabase Storage URL
   taken_at: string; // timestamptz
   analysis_status: AnalysisStatus;
