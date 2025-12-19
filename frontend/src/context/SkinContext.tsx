@@ -1,6 +1,7 @@
 import { EMPTY_SKIN_INSIGHT } from "@/constants/skinInsight";
 import { getAnalysisDetail } from "@/services/analysisDetail.service";
 import { getInterpretations } from "@/services/interpretation.service";
+import { getPhoto } from "@/services/photo.service";
 import { getAnalyzeSkin } from "@/services/skin.service";
 import { getSkinInsight } from "@/services/skinInsight.service";
 import { getSkinLogs } from "@/services/skinLog.service";
@@ -9,6 +10,7 @@ import {
   AnalysisDetail,
   AnalysisInterpretation,
   AnalysisResult,
+  Photo,
   SkinInsightResponse,
   SkinLog,
   TriggerDetected,
@@ -43,6 +45,9 @@ interface SkinContextProps {
   triggers: TriggerDetected[];
   setTriggers: (triggers: TriggerDetected[]) => void;
 
+  photo: Photo | null;
+  fetchPhoto: (logId: string) => Promise<void>;
+
   loading: boolean;
   setLoading: (loading: boolean) => void;
 
@@ -68,6 +73,7 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
   const [skinInsight, setSkinInsight] =
     useState<SkinInsightResponse>(EMPTY_SKIN_INSIGHT);
   const [triggers, setTriggers] = useState<TriggerDetected[]>([]);
+  const [photo, setPhoto] = useState<Photo | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [insightLoading, setInsightLoading] = useState(false);
@@ -137,6 +143,21 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     }
   }, []);
+
+  const fetchPhoto = useCallback(async (logId: string) => {
+    try {
+      setLoading(true);
+      setPhoto(null);
+      const data = await getPhoto(logId);
+      setPhoto(data); // null = tidak ada foto
+      setError(null); // ← penting
+    } catch {
+      setError("Gagal mengambil foto");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     const fetchInterpretations = async () => {
       try {
@@ -184,6 +205,8 @@ export const SkinProvider = ({ children }: { children: React.ReactNode }) => {
         fetchSkinInsight,
         triggers,
         setTriggers,
+        photo,
+        fetchPhoto,
         loading,
         setLoading,
         insightLoading,

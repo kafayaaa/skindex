@@ -1,24 +1,40 @@
 import { useSkin } from "@/context/SkinContext";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { MdOutlineStickyNote2 } from "react-icons/md";
 import { PiForkKnifeBold } from "react-icons/pi";
+import { TbPhoto } from "react-icons/tb";
 
 export default function DailyLog({ date }: { date: Date }) {
-  const { logs, loading, error } = useSkin();
+  const { logs, loading, error, photo, fetchPhoto } = useSkin();
+  const [isOpen, setIsOpen] = useState(false);
 
   const formatDateToISO = (d: Date): string => {
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0"); // Bulan dimulai dari 0
+    const month = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
   // Ambil string tanggal yang diformat dari prop 'date'
   const selectedDateString = formatDateToISO(date);
-
-  if (loading) return <p>Memuat log...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  console.log(selectedDateString);
 
   const filteredLogs = logs.filter((log) => log.date === selectedDateString);
+  console.log(filteredLogs);
+
+  const logId = filteredLogs[0]?.id;
+  console.log(logId);
+
+  useEffect(() => {
+    if (logId) {
+      fetchPhoto(logId);
+    }
+  }, [logId, fetchPhoto]);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
 
   if (filteredLogs.length === 0) {
     return (
@@ -32,6 +48,8 @@ export default function DailyLog({ date }: { date: Date }) {
       </div>
     );
   }
+  if (loading) return <p>Memuat log...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div>
@@ -49,13 +67,46 @@ export default function DailyLog({ date }: { date: Date }) {
               </div>
               <p className="text-sm md:text-base">{log.notes}</p>
             </div>
+
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <PiForkKnifeBold className="text-lg md:text-xl text-rose-500" />
-                <p className="text-sm md:text-base">Diet:</p>
+                <p className="text-sm md:text-base">Konsumsi:</p>
               </div>
               <p className="text-sm md:text-base">{log.diet_notes}</p>
             </div>
+
+            <div>
+              <div className="flex items-center gap-2 mb-1 mt-3">
+                <TbPhoto className="text-lg md:text-xl text-rose-500" />
+                <p className="text-sm md:text-base">Foto:</p>
+                <button
+                  onClick={handleToggle}
+                  className="px-4 py-2 rounded-xl bg-cyan-400 dark:bg-cyan-600 hover:bg-cyan-600 hover:dark:bg-cyan-400 text-white"
+                >
+                  Lihat
+                </button>
+              </div>
+            </div>
+            {isOpen && (
+              <div
+                onClick={handleToggle}
+                className="fixed w-full h-screen inset-0 z-50 bg-black/80 flex items-center justify-center"
+              >
+                <div className="max-w-md">
+                  {photo ? (
+                    <Image
+                      width={500}
+                      height={500}
+                      src={photo.url}
+                      alt="Log Photo"
+                    />
+                  ) : (
+                    <p className="text-white text-center">Memuat foto...</p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ))}
