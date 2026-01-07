@@ -1,0 +1,1 @@
+Skindex is a journaling app for tracking skin condition. It uses AI technology to analyze skin condition by assessing several criteria. Each criterion receives a score and provides solutions. It also provides a diet analysis to help users determine if their food is causing their breakouts.
